@@ -5,6 +5,7 @@
 #include <string>
 #include <stdexcept>
 #include <future>
+#include <format>
 
 #include "Game/Color.h"
 #include "Players/Proxy_Player.h"
@@ -60,7 +61,7 @@ void Outside_Communicator::record_opponent_name(const std::string& name, const s
     }
     else
     {
-        remote_opponent_name = title + " " + name;
+        remote_opponent_name = std::format("{} {}", title, name);
     }
 }
 

@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <cmath>
+#include <format>
 
 #include "Genes/Gene_Value.h"
 
@@ -13,8 +14,8 @@ Interpolated_Gene_Value::Interpolated_Gene_Value(const std::string& name,
                                                  const double game_start_value,
                                                  const double game_end_value,
                                                  const double mutation_size) noexcept :
-    values{{{name + " - Opening", game_start_value, mutation_size},
-            {name + " - Endgame", game_end_value, mutation_size}}}
+    values{{{std::format("{} - Opening", name), game_start_value, mutation_size},
+            {std::format("{} - Endgame", name), game_end_value, mutation_size}}}
 {
 }
 

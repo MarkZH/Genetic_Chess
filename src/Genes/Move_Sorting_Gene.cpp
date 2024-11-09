@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <set>
+#include <format>
 
 #include "Game/Board.h"
 #include "Game/Move.h"
@@ -16,7 +17,7 @@
 namespace
 {
     const std::string input_list_delimiter = ",";
-    const auto output_list_delimiter = input_list_delimiter + " ";
+    const auto output_list_delimiter = std::format("{} ", input_list_delimiter);
     const auto count_property = "Sorter Count";
     const auto order_property = "Sorter Order";
 }
@@ -94,7 +95,7 @@ void Move_Sorting_Gene::load_gene_properties(const std::map<std::string, std::st
         auto sorter = std::find_if(current_sorter, move_sorters.end(), [&name](const auto& ms) { return ms.name == name; });
         if(sorter == move_sorters.end())
         {
-            throw Genome_Creation_Error(name + " is not a move sorter name.");
+            throw Genome_Creation_Error(std::format("{} is not a move sorter name.", name));
         }
         std::iter_swap(current_sorter, sorter);
         ++current_sorter;

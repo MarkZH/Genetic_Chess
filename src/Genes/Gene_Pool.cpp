@@ -20,6 +20,7 @@ using namespace std::chrono_literals;
 #include <sstream>
 #include <semaphore>
 #include <algorithm>
+#include <format>
 
 #include "Players/Genetic_AI.h"
 
@@ -123,13 +124,13 @@ void gene_pool(const std::string& config_file)
     auto round_count = count_still_alive_lines(genome_file_name);
     auto pool = fill_pool(genome_file_name, gene_pool_population, first_mutation_rate);
 
-    const auto game_record_file = genome_file_name + "_games.pgn";
+    const auto game_record_file = std::format("{}_games.pgn", genome_file_name);
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     load_previous_game_stats(game_record_file, game_time, color_wins);
     game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
 
-    const auto best_file_name = genome_file_name + "_best_genome.txt";
+    const auto best_file_name = std::format("{}_best_genome.txt", genome_file_name);
 
     pool_clock.start(Piece_Color::WHITE);
     signal(QUIT_SIGNAL, quit_gene_pool);
@@ -355,7 +356,7 @@ namespace
 
     void record_best_ai(const std::vector<Genetic_AI>& pool, const std::string& best_file_name) noexcept
     {
-        const auto temp_best_file_name = best_file_name + ".tmp";
+        const auto temp_best_file_name = std::format("{}.tmp", best_file_name);
         best_living_ai(pool).print(temp_best_file_name);
         std::filesystem::rename(temp_best_file_name, best_file_name);
     }
@@ -529,7 +530,7 @@ namespace
 
     void throw_on_bad_still_alive_line(size_t line_number, const std::string& line)
     {
-        throw std::runtime_error("Invalid \"Still Alive\" line (line# " + std::to_string(line_number) + "): " + line);
+        throw std::runtime_error(std::format("Invalid \"Still Alive\" line (line# {}): {}", line_number, line));
     }
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept

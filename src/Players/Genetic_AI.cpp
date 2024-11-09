@@ -9,6 +9,7 @@ using namespace std::chrono_literals;
 #include <cmath>
 #include <limits>
 #include <fstream>
+#include <format>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
@@ -601,11 +602,13 @@ namespace
         Game_Result move_result;
         const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
         const auto move_number = board.all_ply_count()/2 + 1;
-        std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + "... " : std::string{});
+        std::string result = std::format("({}", board.whose_turn() == Piece_Color::BLACK ? std::format("{}... ", move_number) : std::string{});
         for(size_t i = 0; i < variation.size(); ++i)
         {
             const auto move_label = move_number + i/2 + move_label_offset;
-            result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
+            result += board.whose_turn() == Piece_Color::WHITE ? std::format("{}. ", move_label) : std::string{};
+            result += variation[i]->algebraic(board);
+            result += " ";
             move_result = board.play_move(*variation[i]);
         }
 
@@ -620,7 +623,7 @@ namespace
         }
         else
         {
-            return String::trim_outer_whitespace(result) + ")";
+            return std::format("{})", String::trim_outer_whitespace(result));
         }
     }
 }
