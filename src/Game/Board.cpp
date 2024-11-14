@@ -304,7 +304,7 @@ void Board::cli_print_game(const Player& white, const Player& black, const Clock
 {
     const auto print_name = [&clock](const auto& player, const auto color)
                             {
-                                std::cout << '\n' << player.name() << " | " << clock.time_left(color).count() << " seconds\n";
+                                std::cout << '\n' << player.name() << " | " << clock.time_left_display(color) << "\n";
                             };
     print_name(black, Piece_Color::BLACK);
     cli_print(std::cout);

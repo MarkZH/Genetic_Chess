@@ -110,6 +110,8 @@ class Clock
         //! \brief Returns whether the clock's time has expired for the player on move.
         bool running_time_expired() const noexcept;
 
+        std::string time_left_display(Piece_Color color) const noexcept;
+
     private:
         std::array<seconds, 2> timers;
         std::array<size_t, 2> moves_since_clock_reset{0, 0};
