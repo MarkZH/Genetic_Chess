@@ -108,6 +108,11 @@ Game_Result play_game(Board board,
     std::vector<const Move*> game_record;
     Game_Result result;
 
+    if(print_board)
+    {
+        board.cli_print_game(white, black, game_clock);
+    }
+
     game_clock.start(board.whose_turn());
 
     while( ! result.game_has_ended())
