@@ -21,7 +21,7 @@ using namespace std::chrono_literals;
 //! \file
 namespace Puzzle
 {
-    void solve(const std::vector<std::string>& fens_or_file_names, std::vector<std::tuple<std::string, std::vector<std::string>>> options)
+    void solve(const std::vector<std::string>& fens_or_file_names, Main_Tools::command_line_options options)
     {
         auto puzzles_to_solve = std::vector<std::string>{};
         for(const auto& fen_or_file_name : fens_or_file_names)
