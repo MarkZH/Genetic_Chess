@@ -66,7 +66,7 @@ class Configuration
             }
             else
             {
-                throw std::runtime_error(parameter + " must be greater than zero (value = " + std::to_string(result) + ")");
+                throw std::runtime_error(std::format("{} must be greater than zero (value = {})", parameter, result));
             }
         }
 

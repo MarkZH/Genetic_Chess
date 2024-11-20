@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <format>
 
 #include "Utility/String.h"
 
@@ -15,20 +16,20 @@ namespace
 void Help_Writer::add_title(const std::string& title) noexcept
 {
     add_extra_space_after_option();
-    text += '\n' + title + '\n' + std::string(title.size(), '=') + "\n\n";
+    text += std::format("\n{}\n{}\n\n", title, std::string(title.size(), '='));
 }
 
 void Help_Writer::add_section_title(const std::string& title) noexcept
 {
     add_extra_space_after_option();
     const auto small_indent = std::string(indent_size/2, ' ');
-    text += small_indent + title + "\n" + small_indent + std::string(title.size(), '-') + "\n";
+    text += std::format("{0}{1}\n{0}{2}\n", small_indent, title, std::string(title.size(), '-'));
 }
 
 void Help_Writer::add_paragraph(const std::string& paragraph) noexcept
 {
     add_extra_space_after_option();
-    text += String::word_wrap(paragraph, line_length) + "\n\n";
+    text += std::format("{}\n\n", String::word_wrap(paragraph, line_length));
 }
 
 void Help_Writer::add_option(const std::string& name,
@@ -40,19 +41,19 @@ void Help_Writer::add_option(const std::string& name,
 
     for(const auto& parameter : required_parameters)
     {
-        text += " [" + parameter + "]";
+        text += std::format(" [{}]", parameter);
     }
 
     for(const auto& parameter : optional_parameters)
     {
-        text += " <" + parameter + ">";
+        text += std::format(" <{}>", parameter);
     }
 
     text += "\n";
 
     if( ! description.empty())
     {
-        text += String::word_wrap(description, line_length, 2*indent_size) + "\n\n";
+        text += std::format("{}\n\n", String::word_wrap(description, line_length, 2*indent_size));
     }
     need_extra_space = description.empty();
 }

@@ -900,7 +900,7 @@ namespace
         auto game_has_ended = false;
         for(const auto& move : moves)
         {
-            function_should_not_throw(result, move + " should be legal",
+            function_should_not_throw(result, std::format("{} should be legal", move),
                 [&]()
                 {
                     if(game_has_ended)
@@ -918,7 +918,7 @@ namespace
     bool move_is_illegal(const Board& board, const std::string& move) noexcept
     {
         bool result = true;
-        function_should_throw<Illegal_Move>(result, move + " should be illegal", [&]() { board.interpret_move(move); });
+        function_should_throw<Illegal_Move>(result, std::format("{} should be illegal", move), [&]() { board.interpret_move(move); });
         return result;
     }
 
@@ -1767,7 +1767,7 @@ namespace
                     {
                         std::vector<std::string> entries;
                         std::ranges::transform(data_list, std::back_inserter(entries), [](auto d) { return std::to_string(d); });
-                        return "{" + String::join(entries, ", ") + "}";
+                        return std::format("{{{}}}", String::join(entries, ", "));
                     };
 
                 return intro + to_string_array(expected) + but + to_string_array(result);
@@ -1787,10 +1787,10 @@ namespace
                 test_result(tests_passed, numbers == expected2, error(numbers, expected2));
             }
 
-            test_result(tests_passed, numbers == expected1, error(numbers, expected1) + " (after removal)");
+            test_result(tests_passed, numbers == expected1, "{} (after removal)", error(numbers, expected1));
         }
 
-        test_result(tests_passed, numbers.empty(), error(numbers, {}) + " (after removal)");
+        test_result(tests_passed, numbers.empty(), "{} (after removal)", error(numbers, {}));
     }
 
     void has_exactly_n_works_as_advertised(bool& tests_passed)

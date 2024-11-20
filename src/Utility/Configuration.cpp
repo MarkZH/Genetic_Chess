@@ -95,8 +95,11 @@ bool Configuration::as_boolean(const std::string& parameter, const std::string& 
     }
     else
     {
-        throw std::runtime_error("Invalid value for \"" + parameter + "\" : \"" + as_text(parameter) + "\"" +
-                                 "\nExpected \"" + affirmative + "\" or \"" + negative + "\".");
+        throw std::runtime_error(std::format("Invalid value for \"{}\" : \"{}\"\nExpected \"{}\" or \"{}\".",
+                                             parameter,
+                                             as_text(parameter),
+                                             affirmative,
+                                             negative));
     }
 }
 
