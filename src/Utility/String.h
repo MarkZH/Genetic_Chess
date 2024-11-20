@@ -214,6 +214,12 @@ namespace String
     //! All whitespace will be condensed to single spaces before wrapping. The character ~ will be
     //! converted to a non-breaking space.
     std::string word_wrap(const std::string& text, size_t line_length, size_t indent = 0) noexcept;
+
+    template<typename ...Format_Args>
+    std::string format_message(const std::string& failure_template, const Format_Args&... args)
+    {
+        return std::vformat(failure_template, std::make_format_args(args...));
+    }
 }
 
 #endif // STRING_H
