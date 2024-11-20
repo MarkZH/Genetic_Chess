@@ -5,7 +5,8 @@
 #include <vector>
 #include <tuple>
 #include <stdexcept>
-#include <format>
+
+#include "String.h"
 
 namespace Main_Tools
 {
@@ -23,14 +24,7 @@ namespace Main_Tools
     {
         if( ! condition)
         {
-            if constexpr(sizeof...(args) > 0)
-            {
-                throw std::invalid_argument(std::vformat(failure_template, std::make_format_args(args...)));
-            }
-            else
-            {
-                throw std::invalid_argument(failure_template);
-            }
+            throw std::invalid_argument(String::format_message(failure_template, args...));
         }
     }
 

@@ -7,7 +7,6 @@
 #include <future>
 #include <fstream>
 #include <chrono>
-#include <format>
 
 #include "Game/Color.h"
 
@@ -89,7 +88,7 @@ class Outside_Communicator
             flush_log_queue();
 
             const auto timestamp = String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S");
-            std::println(ofs, "{} -- {}", timestamp, format_log_message(data, args...));
+            std::println(ofs, "{} -- {}", timestamp, String::format_message(data, args...));
             ofs.flush();
         }
 
@@ -136,20 +135,7 @@ class Outside_Communicator
         template<typename... Format_Args>
         static void queue_log(const std::string& data, Format_Args... args)
         {
-            log_queue.push_back(format_log_message(data, args...));
-        }
-
-        template<typename ...Format_Args>
-        static std::string format_log_message(const std::string& data, const Format_Args&... args)
-        {
-            if constexpr(sizeof...(args) == 0)
-            {
-                return data;
-            }
-            else
-            {
-                return std::vformat(data, std::make_format_args(args...));
-            }
+            log_queue.push_back(String::format_message(data, args...));
         }
 };
 
