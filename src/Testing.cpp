@@ -50,8 +50,17 @@ namespace
 {
     // If expected_result is false, set all_tests_passed to false and print the
     // fail_message to std::cerr. Otherwise, do nothing.
-    bool test_result(bool& all_tests_passed, const bool expected_result, const std::string& fail_message) noexcept;
+    template<typename ...Format_Args>
+    bool test_result(bool& all_tests_passed, const bool expected_result, const std::string& fail_message, const Format_Args&... args) noexcept
+    {
+        if( ! expected_result)
+        {
+            all_tests_passed = false;
+            std::cerr << String::format_message(fail_message, args...) << '\n';
+        }
 
+        return expected_result;
+    }
 
     void print_argument_leader()
     {
@@ -631,17 +640,6 @@ void list_moves(const size_t depth) noexcept
 
 namespace
 {
-    bool test_result(bool& all_tests_passed, const bool expected_result, const std::string& fail_message) noexcept
-    {
-        if( ! expected_result)
-        {
-            all_tests_passed = false;
-            std::cerr << fail_message << '\n';
-        }
-
-        return expected_result;
-    }
-
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept
     {
         std::ifstream file1(file_name1);
@@ -772,7 +770,7 @@ namespace
             if(test_type == "illegal position")
             {
                 function_should_throw<std::invalid_argument>(test_passed, "", [](const std::string& s) { return Board{s}; }, board_fen);
-                test_result(all_tests_passed, test_passed, line + " -- FAILED\n");
+                test_result(all_tests_passed, test_passed, "{} -- FAILED\n", line);
                 continue;
             }
 
@@ -804,7 +802,7 @@ namespace
                 if( ! test_assert(expected_result == "true" || expected_result == "false")) { continue; }
                 const auto expected_bool = (expected_result == "true");
                 test_result(test_passed, board.piece_is_pinned(Square(square.front(), square.back() - '0')) == expected_bool,
-                            "Expected result of " + square + " being pinned: " + expected_result);
+                            "Expected result of {} being pinned: {}", square, expected_result);
             }
             else if(test_type == "discovered check")
             {
@@ -819,11 +817,11 @@ namespace
                     if( ! test_assert(expected_result == "true" || expected_result == "false")) { continue; }
                     const auto expected_bool = (expected_result == "true");
                     test_result(test_passed, board.is_discovered_check(move) == expected_bool,
-                                "Expected result of " + move.coordinates() + " being a discovered check: " + expected_result);
+                                "Expected result of {} being a discovered check: {}", move.coordinates(), expected_result);
                 }
                 catch(const Illegal_Move&)
                 {
-                    test_result(test_passed, false, "Move is not legal: " + move_result[0]);
+                    test_result(test_passed, false, "Move is not legal: {}", move_result[0]);
                 }
             }
             else if(test_type == "move count")
@@ -832,7 +830,7 @@ namespace
                 const auto moves = String::split(specification.at(2));
                 const auto expected_count = String::to_number<size_t>(specification.back());
                 test_result(test_passed, all_moves_legal(board, moves) && board.legal_moves().size() == expected_count,
-                            "Legal moves counted: " + std::to_string(board.legal_moves().size()) + "; Expected: " + std::to_string(expected_count));
+                            "Legal moves counted: {}; Expected: {}", board.legal_moves().size(), expected_count);
             }
             else if(test_type == "checkmate material")
             {
@@ -840,7 +838,7 @@ namespace
                 if( ! test_assert(result_text == "true" || result_text == "false")) { continue; }
                 const auto expected_result = (result_text == "true");
                 test_result(test_passed, board.enough_material_to_checkmate() == expected_result,
-                            std::string("This board does") + (expected_result ? "" : " not") + " have enough material to checkmate.");
+                            "This board does{} have enough material to checkmate.", expected_result ? "" : " not");
             }
             else if(test_type == "king in check")
             {
@@ -850,11 +848,9 @@ namespace
                 if( ! test_assert(expected_answer == "true" || expected_answer == "false")) { continue; }
                 const auto expected_result = expected_answer == "true";
                 test_result(test_passed, all_moves_legal(board, moves) && board.king_is_in_check() == expected_result,
-                            std::string("King is ") +
-                                (expected_result ? "not " : "") +
-                                "in check when it should " +
-                                (expected_result ? "" : "not ") +
-                                "be in check.");
+                            "King is{} in check when it should{} be in check.",
+                            expected_result ? " not" : "",
+                            expected_result ? "" : " not");
             }
             else if(test_type == "quiescent")
             {
@@ -872,7 +868,7 @@ namespace
                 }
                 test_result(test_passed,
                             board.fen() == actual_result_board.fen(),
-                            "Expected: " + board.fen() + "\nGot:      " + actual_result_board.fen());
+                            "Expected: {}\nGot:      {}", board.fen(), actual_result_board.fen());
             }
             else if(test_type == "last move checks")
             {
@@ -889,10 +885,10 @@ namespace
             }
             else
             {
-                test_result(test_passed, false, "Bad test: " + test_type);
+                test_result(test_passed, false, "Bad test: {}", test_type);
             }
 
-            test_result(all_tests_passed, test_passed, line + " -- FAILED\n");
+            test_result(all_tests_passed, test_passed, "{} -- FAILED\n", line);
         }
 
         return all_tests_passed;
@@ -933,7 +929,7 @@ namespace
             const auto step = Move::attack_direction_from_index(i);
             const auto start = Square{'e', 4};
             const auto step_index = Move(start, start + step).attack_index();
-            test_result(tests_passed, step_index == i, "Direction-index mismatch: " + std::to_string(i) + " --> " + std::to_string(step_index));
+            test_result(tests_passed, step_index == i, "Direction-index mismatch: {} --> {}", i, step_index);
         }
     }
 
@@ -945,7 +941,7 @@ namespace
             for(int rank = 1; rank <= 8; ++rank)
             {
                 const auto square = Square{file, rank};
-                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.text());
+                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index: {}", square.text());
                 visited[square.index()] = true;
             }
         }
@@ -961,7 +957,7 @@ namespace
                 const auto square = Square{file, rank};
                 test_result(tests_passed,
                             square.file() == file && square.rank() == rank,
-                            std::string{"Square constructed with "} + file + std::to_string(rank) + " results in " + square.text());
+                            "Square constructed with {}{} results in {}", file, rank, square.text());
             }
         }
     }
@@ -975,7 +971,9 @@ namespace
             {
                 const auto piece = Piece{color, type};
                 const auto piece2 = Piece{piece.color(), piece.type()};
-                test_result(tests_passed, piece == piece2, std::string("Inconsistent construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
+                test_result(tests_passed,
+                            piece == piece2,
+                            "Inconsistent construction for {} --> {}", piece.fen_symbol(), piece2.fen_symbol());
             }
         }
     }
@@ -989,7 +987,9 @@ namespace
             {
                 const auto piece = Piece{color, type};
                 const auto piece2 = Piece(piece.fen_symbol());
-                test_result(tests_passed, piece == piece2, std::string("Inconsistent FEN construction for ") + std::string(1, piece.fen_symbol()) + std::string(" --> ") + std::string(1, piece2.fen_symbol()));
+                test_result(tests_passed,
+                            piece == piece2,
+                            "Inconsistent FEN construction for {} --> {}", piece.fen_symbol(), piece2.fen_symbol());
             }
         }
     }
@@ -1005,7 +1005,9 @@ namespace
                 const auto dr = std::abs(diff.rank_change);
                 if((dr == 0 && df == 1) || (df == 0 && dr == 1)) // square are adjacent in same row or column
                 {
-                    test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.text() + " and " + square2.text() + " have same color.");
+                    test_result(tests_passed,
+                                square1.color() != square2.color(),
+                                "Adjacent squares {} and {} have same color.", square1.text(), square2.text());
                 }
             }
         }
@@ -1019,8 +1021,7 @@ namespace
             {
                 test_result(tests_passed,
                             a + (b - a) == b,
-                            "Square arithetic problem: " +
-                            a.text() + " + (" + b.text() + " - " + a.text() + ") != " + b.text());
+                            "Square arithetic problem: {0} + ({1} - {0}) != {1}", a.text(), b.text());
             }
         }
     }
@@ -1030,7 +1031,7 @@ namespace
         std::array<bool, 64> squares_visited{};
         for(const auto square : Square::all_squares())
         {
-            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.text() + " already visited.");
+            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure {} already visited.", square.text());
             squares_visited[square.index()] = true;
         }
         test_result(tests_passed,
@@ -1045,12 +1046,12 @@ namespace
         const auto find_move_text = [&board, &move_text](const Move* const move) { return move->algebraic(board) == move_text; };
         const auto found_move = std::ranges::find_if(move_list, find_move_text);
 
-        test_result(tests_passed, found_move != move_list.end(), "Ambiguous move notation not found: " + move_text);
+        test_result(tests_passed, found_move != move_list.end(), "Ambiguous move notation not found: {}", move_text);
         if(found_move != move_list.end())
         {
-            test_result(tests_passed, (*found_move)->start().text() == start_square, move_text + " does not start on square " + start_square + ".");
-            test_result(tests_passed, (*found_move)->end().text() == end_square, move_text + " does not end on square " + end_square + ".");
-            test_result(tests_passed, std::find_if(std::next(found_move), move_list.end(), find_move_text) == move_list.end(), "Multiple moves with algebraic text: " + move_text);
+            test_result(tests_passed, (*found_move)->start().text() == start_square, "{} does not start on square {}.", move_text, start_square);
+            test_result(tests_passed, (*found_move)->end().text() == end_square, "{} does not end on square {}.", move_text, end_square);
+            test_result(tests_passed, std::find_if(std::next(found_move), move_list.end(), find_move_text) == move_list.end(), "Multiple moves with algebraic text: {}", move_text);
         }
     }
 
@@ -1126,9 +1127,11 @@ namespace
                 break;
             }
 
-            test_result(tests_passed, move_chosen, "Unable to choose next move (moves made = " + std::to_string(move_counter) + ").");
+            test_result(tests_passed, move_chosen, "Unable to choose next move (moves made = {}).", move_counter);
         }
-        test_result(tests_passed, fifty_move_result.ending_reason() == "50-move limit", "50-move draw test result: Got: " + fifty_move_result.ending_reason() + " instead.");
+        test_result(tests_passed,
+                    fifty_move_result.ending_reason() == "50-move limit",
+                    "50-move draw test result: Got: {} instead.", fifty_move_result.ending_reason());
     }
 
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed)
@@ -1136,12 +1139,12 @@ namespace
         Board move_derivation_board;
         const auto goal_board = Board{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
         const auto derived_moves = move_derivation_board.derive_moves(goal_board);
-        test_result(tests_passed, derived_moves.size() == 2, "Wrong number of moves derived. Got " + std::to_string(derived_moves.size()));
+        test_result(tests_passed, derived_moves.size() == 2, "Wrong number of moves derived. Got {}", derived_moves.size());
         for(const auto move : derived_moves)
         {
             move_derivation_board.play_move(*move);
         }
-        test_result(tests_passed, move_derivation_board.fen() == goal_board.fen(), "Wrong moves derived. " + move_derivation_board.fen() + " != " + goal_board.fen());
+        test_result(tests_passed, move_derivation_board.fen() == goal_board.fen(), "Wrong moves derived. {} != {}", move_derivation_board.fen(), goal_board.fen());
     }
 
     void identical_boards_have_identical_hashes(bool& tests_passed)
@@ -1195,7 +1198,7 @@ namespace
             board.play_move(move);
         }
 
-        test_result(tests_passed, hash != board.board_hash(), "Change in en passant target should result in different hash.\n" + fen + "\n" + board.fen());
+        test_result(tests_passed, hash != board.board_hash(), "Change in en passant target should result in different hash.\n{}\n{}", fen, board.fen());
     }
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed)
@@ -1256,7 +1259,7 @@ namespace
         const auto& move = board.interpret_move(move_text);
         const auto check_prediction = board.move_checks_king(move);
         board.play_move(move);
-        test_result(tests_passed, board.king_is_in_check() == check_prediction, "Checking prediction failed: " + fen + " after " + move_text);
+        test_result(tests_passed, board.king_is_in_check() == check_prediction, "Checking prediction failed: {} after {}", fen, move_text);
     }
 
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed)
@@ -1502,7 +1505,7 @@ namespace
         const auto game_progress = piece_strength_gene.game_progress(Board{});
         test_result(tests_passed,
                     std::abs(game_progress) < 1e-8,
-                    "Game progress at beginning of game is not zero: " + std::to_string(game_progress));
+                    "Game progress at beginning of game is not zero: {}", game_progress);
     }
 
     void game_progress_where_one_side_has_only_king_is_one(bool& tests_passed)
@@ -1513,7 +1516,7 @@ namespace
         const auto game_progress = piece_strength_gene.game_progress(board);
         test_result(tests_passed,
                     std::abs(game_progress - 1.0) < 1e-8,
-                    "Game progress with one size having only one king is not one: " + std::to_string(game_progress));
+                    "Game progress with one size having only one king is not one: {}", game_progress);
     }
 
     void game_progress_with_one_queen_removed_makes_sense(bool& tests_passed)
@@ -1529,8 +1532,7 @@ namespace
 
         test_result(tests_passed,
                     std::abs(game_progress - expected_progress) < 1e-8,
-                    "Game progress with one queen missing not as expected: "
-                    + std::to_string(game_progress) + " != " + std::to_string(expected_progress));
+                    "Game progress with one queen missing not as expected: {} != {}", game_progress, expected_progress);
     }
 
     void split_and_join_are_inverse_operations(bool& tests_passed)
@@ -1539,9 +1541,9 @@ namespace
         const auto splitter = "/";
         const auto split = String::split(split_join_input, splitter);
         const auto rejoin = String::join(split.begin(), split.end(), splitter);
-        test_result(tests_passed, split_join_input == rejoin, std::string{"Iterator Split-join failed: "} + split_join_input + " --> " + rejoin);
+        test_result(tests_passed, split_join_input == rejoin, "Iterator Split-join failed: {} --> {}", split_join_input, rejoin);
         const auto rejoin2 = String::join(split, splitter);
-        test_result(tests_passed, split_join_input == rejoin2, std::string{"Container Split-join failed: "} + split_join_input + " --> " + rejoin2);
+        test_result(tests_passed, split_join_input == rejoin2, "Container Split-join failed: {} --> {}", split_join_input, rejoin2);
     }
 
     void commas_as_thousands_separators_correctly_placed(bool& tests_passed)
@@ -1586,8 +1588,9 @@ namespace
         }
         clock.stop();
         test_result(tests_passed, std::chrono::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 1ms,
-                    "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(Piece_Color::BLACK).count()) + " sec." +
-                    " Should be " + std::to_string(expected_time_after_reset.count()) + "sec.");
+                    "Clock reset incorrect: time left for black is {} sec. Should be {} sec.",
+                    clock.time_left(Piece_Color::BLACK).count(),
+                    expected_time_after_reset.count());
     }
 
     void clock_with_increment_gets_time_added_on_every_punch(bool& tests_passed)
@@ -1610,8 +1613,9 @@ namespace
         }
         clock2.stop();
         test_result(tests_passed, std::chrono::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 1ms,
-                    std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(Piece_Color::BLACK).count()) + " sec." +
-                    " Should be " + std::to_string(expected_time.count()) + "sec.");
+                    "Clock increment incorrect: time left for black is {} sec. Should be {} sec.",
+                    clock2.time_left(Piece_Color::BLACK).count(),
+                    expected_time.count());
     }
 
     void midgame_node_result_values_compare_correctly(bool& tests_passed)
@@ -1696,8 +1700,7 @@ namespace
         const auto moves_left = Math::average_moves_left(mean_moves, width, moves_so_far);
         const auto expected_moves_left = 16.103940;
         test_result(tests_passed, std::abs(moves_left - expected_moves_left) < 1e-4,
-                    std::string("Log-Norm failed: Expected: ") + std::to_string(expected_moves_left) +
-                    " --- Got: " + std::to_string(moves_left));
+                    "Log-Norm failed: Expected: {} --- Got: {}", expected_moves_left, moves_left);
     }
 
     void average_moves_left_returns_finite_result_after_zero_moves(bool& tests_passed)
@@ -1707,7 +1710,7 @@ namespace
         const size_t moves_played_at_start = 0;
         const auto moves_left_at_start = Math::average_moves_left(mean_moves, width, moves_played_at_start);
         test_result(tests_passed, std::isfinite(moves_left_at_start),
-                    std::string("Log-Norm failed with zero moves: Expected finite answer, Got: ") + std::to_string(moves_left_at_start));
+                    "Log-Norm failed with zero moves: Expected finite answer, Got: {}", moves_left_at_start);
     }
 
     void average_moves_left_returns_finite_result_after_one_move(bool& tests_passed)
@@ -1717,7 +1720,7 @@ namespace
         const size_t moves_played_after_one_move = 1;
         const auto moves_left_after_one_move = Math::average_moves_left(mean_moves, width, moves_played_after_one_move);
         test_result(tests_passed, std::isfinite(moves_left_after_one_move),
-                    std::string("Log-Norm failed after one move: Expected finite answer, Got: ") + std::to_string(moves_left_after_one_move));
+                    "Log-Norm failed after one move: Expected finite answer, Got: {}", moves_left_after_one_move);
     }
 
     void math_normalize_test(bool& tests_passed)
@@ -1734,7 +1737,7 @@ namespace
         Math::normalize(x, y);
         if(too_far(x, expected_x) || too_far(y, expected_y))
         {
-            std::cerr << "Normalizing (2.0, 8.0) should have given (" << expected_x << ", " << expected_y << ") .Got(" << x << ", " << y << ").\n";
+            std::cerr << std::format("Normalizing (2.0, 8.0) should have given ({}, {}) .Got({}, {}).\n", expected_x, expected_y, x, y);
             tests_passed = false;
         }
 
@@ -1747,7 +1750,7 @@ namespace
         Math::normalize(a, b, c);
         if(too_far(a, expected_a) || too_far(b, expected_b) || too_far(c, expected_c))
         {
-            std::cerr << "Normalizing (2.0, 8.0, -10.0) should have given (" << expected_a << ", " << expected_b << ", " << expected_c << "). Got (" << a << ", " << b << ", " << c << ").\n";
+            std::cerr << std::format("Normalizing (2.0, 8.0, -10.0) should have given ({}, {}, {}). Got ({}, {}, {}).\n", expected_a, expected_b, expected_c, a, b, c);
             tests_passed = false;
         }
     }
@@ -1814,7 +1817,7 @@ namespace
                                                              reps);
                 test_result(tests_passed,
                             result == (value == reps),
-                            std::string{"has_exactly_n failed for "} + std::to_string(reps) + " copies of " + std::to_string(value));
+                            "has_exactly_n failed for {} copies of {}", reps, value);
             }
         }
     }
@@ -1837,9 +1840,13 @@ namespace
                           std::abs(rational_success_count - expected_successes) < maximum_deviation,
                           "Wrong number of successes with rational probability"))
         {
-            std::cout << "Rational success probability (" << probability_numerator << "/" << probability_denominator << ") --> "
-                << String::format_number(rational_success_count) << " / " << String::format_number(number_of_trials)
-                << "\nExpected sucesses: " << String::format_number(expected_successes) << " +/- " << String::format_number(maximum_deviation)
+            std::cout << std::format("Rational success probability ({}/{}) --> {} / {}\nExpected sucesses: {} +/- {}",
+                                     probability_numerator,
+                                     probability_denominator,
+                                     String::format_number(rational_success_count),
+                                     String::format_number(number_of_trials),
+                                     String::format_number(expected_successes),
+                                     String::format_number(maximum_deviation))
                 << std::endl;
         }
     }

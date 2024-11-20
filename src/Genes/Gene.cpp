@@ -279,7 +279,7 @@ void Gene::test(bool& test_variable, const Board& board, const Piece_Color persp
     const auto result = score_board(board, perspective, board.played_ply_count());
     if(std::abs(result - expected_score) > 1e-6)
     {
-        std::cerr << "Error in " << name() << " Test #" << test_number << ": Expected " << expected_score << ", Got: " << result << '\n';
+        std::cerr << std::format("Error in {} Test #{}: Expected {}, Got: {}\n", name(), test_number, expected_score, result);
         board.cli_print(std::cerr);
         test_variable = false;
     }
