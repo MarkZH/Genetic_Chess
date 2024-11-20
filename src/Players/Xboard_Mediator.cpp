@@ -5,6 +5,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <optional>
+#include <format>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -23,21 +24,22 @@ Xboard_Mediator::Xboard_Mediator(const Player& local_player, const bool enable_l
     const auto command = receive_command();
     if(command == expected)
     {
-        send_command("feature "
-                     "usermove=1 "
-                     "sigint=0 "
-                     "reuse=1 "
-                     "myname=\"" + local_player.name() + "\" "
-                     "name=1 "
-                     "ping=1 "
-                     "setboard=1 "
-                     "colors=0 "
-                     "done=1");
+        send_command(std::format("feature "
+                                 "usermove=1 "
+                                 "sigint=0 "
+                                 "reuse=1 "
+                                 "myname=\"{}\" "
+                                 "name=1 "
+                                 "ping=1 "
+                                 "setboard=1 "
+                                 "colors=0 "
+                                 "done=1", local_player.name()));
     }
     else
     {
         log("ERROR: Expected \"{}\"", expected);
-        throw std::runtime_error("Error in communicating with Xboard program. Expected \"" + expected + "\", got \"" + command + "\".");
+        throw std::runtime_error(std::format("Error in communicating with Xboard program. Expected \"{}\", got \"{}\".", 
+                                             expected, command));
     }
 }
 
@@ -348,7 +350,7 @@ std::string Xboard_Mediator::receive_xboard_command(Clock& clock, bool while_lis
 
 void Xboard_Mediator::send_error(const std::string& command, const std::string& reason) const noexcept
 {
-    send_command("Error (" + reason + "): " + command);
+    send_command(std::format("Error ({}): {}", reason, command));
 }
 
 std::string Xboard_Mediator::listener(Clock& clock)
@@ -385,5 +387,5 @@ std::string Xboard_Mediator::listener(Clock& clock)
 
 void Xboard_Mediator::report_end_of_game(const Game_Result& result) const noexcept
 {
-    send_command(result.game_ending_annotation() + " {" + result.ending_reason() + "}");
+    send_command(std::format("{} {{{}}}", result.game_ending_annotation(), result.ending_reason()));
 }

@@ -223,7 +223,7 @@ void PGN::confirm_game_record(const std::string& file_name)
     auto input = std::ifstream(file_name);
     if( ! input)
     {
-        throw std::runtime_error("Could not open file " + file_name + " for reading.");
+        throw std::runtime_error(std::format("Could not open file {} for reading.", file_name));
     }
 
     auto game_count = 0;
@@ -412,7 +412,7 @@ void PGN::confirm_game_record(const std::string& file_name)
 
         if(std::isdigit(token.front()))
         {
-            move_number = String::split(token, ".")[0] + ". ";
+            move_number = std::format("{}. ", String::split(token, ".")[0]);
             continue;
         }
 
@@ -437,7 +437,8 @@ void PGN::confirm_game_record(const std::string& file_name)
         }
 
         const auto& move_to_play = board.interpret_move(token);
-        check_rule_result("Move: " + move_number + token + ")",
+        const auto pgn_location = std::format("Move ({}{})", move_number, token);
+        check_rule_result(pgn_location,
                           "capture",
                           token.contains('x'),
                           board.move_captures(move_to_play),
@@ -446,13 +447,13 @@ void PGN::confirm_game_record(const std::string& file_name)
         board_before_last_move = board;
         result = board.play_move(move_to_play);
 
-        check_rule_result("Move (" + move_number + token + ")",
+        check_rule_result(pgn_location,
                           "check",
                           std::string_view("+#").contains(token.back()),
                           board.king_is_in_check(),
                           input);
 
-        check_rule_result("Move (" + move_number + token + ")",
+        check_rule_result(pgn_location,
                           "checkmate",
                           token.back() == '#',
                           result.game_has_ended() && result.winner() != Winner_Color::NONE,
@@ -547,7 +548,7 @@ void PGN::print_game_record(const Board& board,
             std::print(game_text, " {}", commentary);
         }
         commentary_board.play_move(*next_move);
-        previous_move_had_comment = !commentary.empty();
+        previous_move_had_comment = ! commentary.empty();
     }
     std::print(game_text, " {}", actual_result.game_ending_annotation());
 

@@ -5,6 +5,7 @@
 #include <string>
 #include <iosfwd>
 #include <memory>
+#include <format>
 
 #include "Game/Color.h"
 
@@ -114,7 +115,7 @@ class Gene
         template<typename Error = Genome_Creation_Error>
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const
         {
-            throw Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
+            throw Error(std::format("Invalid line in while reading for {}: {}\n{}", name(), line, reason));
         }
 
         //! \brief Mutate the Activation components

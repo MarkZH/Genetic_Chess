@@ -35,7 +35,7 @@ std::vector<std::unique_ptr<Player>> get_players(Main_Tools::command_line_option
         }
         else if(opt == "-genetic")
         {
-            Main_Tools::argument_assert(!values.empty(), "Genome file needed for player");
+            Main_Tools::argument_assert( ! values.empty(), "Genome file needed for player");
             std::string file_name = values[0];
             if(values.size() > 1)
             {
@@ -74,17 +74,17 @@ Clock get_clock(Main_Tools::command_line_options& options)
     {
         if(opt == "-time")
         {
-            Main_Tools::argument_assert(!values.empty(), opt + " requires a numeric parameter.");
+            Main_Tools::argument_assert( ! values.empty(), "{} requires a numeric parameter.", opt);
             game_time = String::to_duration<Clock::seconds>(values[0]);
         }
         else if(opt == "-reset-moves")
         {
-            Main_Tools::argument_assert(!values.empty(), opt + " requires a whole number parameter.");
+            Main_Tools::argument_assert( ! values.empty(), "{} requires a whole number parameter.", opt);
             moves_per_reset = String::to_number<size_t>(values[0]);
         }
         else if(opt == "-increment-time")
         {
-            Main_Tools::argument_assert(!values.empty(), opt + " requires a numeric parameter.");
+            Main_Tools::argument_assert(!values.empty(), " requires a numeric parameter.", opt);
             increment_time = String::to_duration<Clock::seconds>(values[0]);
         }
         else
@@ -109,6 +109,11 @@ Game_Result play_game(Board board,
     std::vector<const Move*> game_record;
     Game_Result result;
 
+    if(print_board)
+    {
+        board.cli_print_game(white, black, game_clock);
+    }
+
     game_clock.start(board.whose_turn());
 
     while( ! result.game_has_ended())
@@ -118,7 +123,7 @@ Game_Result play_game(Board board,
 
         if(Player::thinking_mode() != Thinking_Output_Type::NO_THINKING)
         {
-            std::println("{} chose {}", player.name(), move_chosen.algebraic(board));
+            std::println("\n{} chose {}", player.name(), move_chosen.algebraic(board));
         }
 
         result = game_clock.punch(board);
@@ -225,22 +230,22 @@ void start_game(Main_Tools::command_line_options options)
     {
         if(opt == "-board")
         {
-            Main_Tools::argument_assert( ! values.empty(), opt + " requires a quoted FEN text parameter.");
+            Main_Tools::argument_assert( ! values.empty(), "{} requires a quoted FEN text parameter.", opt);
             board = Board(values[0]);
         }
         else if(opt == "-game-file")
         {
-            Main_Tools::argument_assert( ! values.empty(), opt + " requires a file name.");
+            Main_Tools::argument_assert( ! values.empty(), "{} requires a file name.", opt);
             game_file_name = values[0];
         }
         else if(opt == "-event")
         {
-            Main_Tools::argument_assert( ! values.empty(), opt + " requires a text parameter.");
+            Main_Tools::argument_assert( ! values.empty(), "{} requires a text parameter.", opt);
             event_name = values[0];
         }
         else if(opt == "-location")
         {
-            Main_Tools::argument_assert( ! values.empty(), opt + " requires a text parameter.");
+            Main_Tools::argument_assert( ! values.empty(), "{} requires a text parameter.", opt);
             location = values[0];
         }
         else if(opt == "-xboard")

@@ -7,6 +7,7 @@
 #include <numeric>
 #include <functional>
 #include <print>
+#include <format>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -100,7 +101,7 @@ Genome::Genome(std::istream& is, int id_in) : Genome()
         {
             auto add_details = [this](const auto& e)
             {
-                return "Error in creating Genome #" + std::to_string(id()) + "\n" + e.what() + "\nFile: ";
+                return std::format("Error in creating Genome #{}\n{}\nFile: ", id(), e.what());
             };
 
             try
@@ -125,7 +126,7 @@ Genome::Genome(std::istream& is, int id_in) : Genome()
         }
     }
 
-    throw Genome_Creation_Error("Could not locate ID " + std::to_string(id_number) + " inside file ");
+    throw Genome_Creation_Error(std::format("Could not locate ID {} inside file ", id_number));
 }
 
 void Genome::reset_piece_strength_gene() noexcept
@@ -190,7 +191,7 @@ void Genome::read_from(std::istream& is)
             }
             else
             {
-                throw Genome_Creation_Error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
+                throw Genome_Creation_Error(std::format("Unrecognized gene name: {}\nin line: {}", gene_name, line));
             }
         }
         else

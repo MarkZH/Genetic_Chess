@@ -1,6 +1,7 @@
 #include "Game/Game_Result.h"
 
 #include <string>
+#include <format>
 
 #include "Game/Color.h"
 
@@ -51,7 +52,7 @@ std::string Game_Result::ending_reason() const noexcept
     switch(cause)
     {
         case Game_Result_Type::CHECKMATE:
-            return color_text(winner()) + " mates";
+            return std::format("{} mates", color_text(winner()));
         case Game_Result_Type::STALEMATE:
             return "Stalemate";
         case Game_Result_Type::FIFTY_MOVE:

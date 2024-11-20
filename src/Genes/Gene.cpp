@@ -11,6 +11,7 @@
 #include <limits>
 #include <string>
 #include <print>
+#include <format>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
@@ -104,18 +105,18 @@ void Gene::read_from(std::istream& is)
             }
             else
             {
-                throw_on_invalid_line(line, "Reading data for wrong gene. Gene is " + name() + ", data is for " + property_data + ".");
+                throw_on_invalid_line(line, std::format("Reading data for wrong gene. Gene is {}, data is for {}.", name(), property_data));
             }
         }
 
         const auto entry = properties.find(property_name);
         if(entry == properties.end())
         {
-            throw_on_invalid_line(line, "Unrecognized parameter name: " + property_name);
+            throw_on_invalid_line(line, std::format("Unrecognized parameter name: {}", property_name));
         }
         else if( ! entry->second.empty())
         {
-            throw_on_invalid_line<Duplicate_Genome_Data>(line, "Duplicate parameter: " + property_name);
+            throw_on_invalid_line<Duplicate_Genome_Data>(line, std::format("Duplicate parameter: {}", property_name));
         }
         else
         {
@@ -131,7 +132,7 @@ void Gene::read_from(std::istream& is)
                         });
     if( ! missing_data.empty())
     {
-        throw Missing_Genome_Data("Missing gene data for " + name() + ":" + missing_data);
+        throw Missing_Genome_Data(std::format("Missing gene data for {}:{}", name(), missing_data));
     }
 
     try
@@ -140,7 +141,7 @@ void Gene::read_from(std::istream& is)
     }
     catch(const std::exception& e)
     {
-        throw std::runtime_error("Bad parameter value in " + name() + ": " + e.what());
+        throw std::runtime_error(std::format("Bad parameter value in {}: {}", name(), e.what()));
     }
 }
 
@@ -149,7 +150,7 @@ void Gene::read_from(const std::string& file_name)
     auto ifs = std::ifstream(file_name);
     if( ! ifs)
     {
-        throw Genome_Creation_Error("Could not open " + file_name + " to read.");
+        throw Genome_Creation_Error(std::format("Could not open {} to read.", file_name));
     }
 
     for(std::string line; std::getline(ifs, line);)
@@ -161,7 +162,7 @@ void Gene::read_from(const std::string& file_name)
             {
                 auto add_details = [this, &file_name](const auto& e)
                                    {
-                                       return "Error in reading data for " + name() + " from " + file_name + "\n" + e.what();
+                                       return std::format("Error in reading data for {} from {}\n{}", name(), file_name, e.what());
                                    };
                 try
                 {
@@ -184,7 +185,7 @@ void Gene::read_from(const std::string& file_name)
         }
     }
 
-    throw Genome_Creation_Error(name() + " not found in " + file_name);
+    throw Genome_Creation_Error(std::format("{} not found in {}", name(), file_name));
 }
 
 void Gene::mutate() noexcept
