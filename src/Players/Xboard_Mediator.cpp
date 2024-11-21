@@ -24,16 +24,16 @@ Xboard_Mediator::Xboard_Mediator(const Player& local_player, const bool enable_l
     const auto command = receive_command();
     if(command == expected)
     {
-        send_command(std::format("feature "
-                                 "usermove=1 "
-                                 "sigint=0 "
-                                 "reuse=1 "
-                                 "myname=\"{}\" "
-                                 "name=1 "
-                                 "ping=1 "
-                                 "setboard=1 "
-                                 "colors=0 "
-                                 "done=1", local_player.name()));
+        send_command("feature "
+                     "usermove=1 "
+                     "sigint=0 "
+                     "reuse=1 "
+                     "myname=\"{}\" "
+                     "name=1 "
+                     "ping=1 "
+                     "setboard=1 "
+                     "colors=0 "
+                     "done=1", local_player.name());
     }
     else
     {
@@ -61,7 +61,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
 
             if(command.starts_with("ping "))
             {
-                send_command("pong " + String::split(command).back());
+                send_command("pong {}", String::split(command).back());
             }
             else if(command == "go")
             {
@@ -140,7 +140,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 }
                 catch(const Illegal_Move&)
                 {
-                    send_command("Illegal move: " + move);
+                    send_command("Illegal move: {}", move);
                 }
             }
             else if(command.starts_with("level "))
@@ -302,7 +302,7 @@ Game_Result Xboard_Mediator::handle_move(Board& board, const Move& move, std::ve
     }
     else
     {
-        send_command("move " + move.coordinates());
+        send_command("move {}", move.coordinates());
         move_list.push_back(&move);
         const auto result = board.play_move(move);
         if(result.game_has_ended())
@@ -350,7 +350,7 @@ std::string Xboard_Mediator::receive_xboard_command(Clock& clock, bool while_lis
 
 void Xboard_Mediator::send_error(const std::string& command, const std::string& reason) const noexcept
 {
-    send_command(std::format("Error ({}): {}", reason, command));
+    send_command("Error ({}): {}", reason, command);
 }
 
 std::string Xboard_Mediator::listener(Clock& clock)
@@ -387,5 +387,5 @@ std::string Xboard_Mediator::listener(Clock& clock)
 
 void Xboard_Mediator::report_end_of_game(const Game_Result& result) const noexcept
 {
-    send_command(std::format("{} {{{}}}", result.game_ending_annotation(), result.ending_reason()));
+    send_command("{} {{{}}}", result.game_ending_annotation(), result.ending_reason());
 }

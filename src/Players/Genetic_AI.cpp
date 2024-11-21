@@ -663,7 +663,7 @@ void Genetic_AI::print(const std::string& file_name) const
     auto ofs = std::ofstream(file_name, std::ofstream::app);
     if( ! ofs)
     {
-        throw std::invalid_argument("Could not open file for printing AI data: " + file_name);
+        throw std::invalid_argument(std::format("Could not open file for printing AI data: {}", file_name));
     }
     print(ofs);
 }
@@ -688,7 +688,7 @@ int find_last_id(const std::string& players_file_name)
     std::ifstream player_input(players_file_name);
     if( ! player_input)
     {
-        throw std::invalid_argument("File not found: " + players_file_name);
+        throw std::invalid_argument(std::format("File not found: {}", players_file_name));
     }
 
     std::string last_player;
@@ -702,13 +702,13 @@ int find_last_id(const std::string& players_file_name)
 
     if(last_player.empty())
     {
-        throw std::runtime_error("No valid ID found in file: " + players_file_name);
+        throw std::runtime_error(std::format("No valid ID found in file: {}", players_file_name));
     }
 
     const auto split = String::split(last_player, ":", 1);
     if(split.size() != 2)
     {
-        throw std::runtime_error("Invalid ID line: " + last_player);
+        throw std::runtime_error(std::format("Invalid ID line: {}", last_player));
     }
 
     try
@@ -717,6 +717,6 @@ int find_last_id(const std::string& players_file_name)
     }
     catch(const std::exception&)
     {
-        throw std::runtime_error("Could not convert to ID number: " + last_player);
+        throw std::runtime_error(std::format("Could not convert to ID number: {}", last_player));
     }
 }

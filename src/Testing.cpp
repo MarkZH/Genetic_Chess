@@ -14,6 +14,7 @@
 using namespace std::chrono_literals;
 #include <string>
 #include <functional>
+#include <format>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -1563,7 +1564,7 @@ namespace
         {
             test_function(tests_passed, "Format integer (size_t)", text, String::format_number<size_t>, number);
             test_function(tests_passed, "Format integer (int)", text, String::format_number<int>, number);
-            test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_number<int>, -number);
+            test_function(tests_passed, "Format integer (negative int)", std::format("-{}", text), String::format_number<int>, -number);
         }
     }
 

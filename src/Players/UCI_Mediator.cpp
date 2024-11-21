@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <format>
 
 #include "Players/Player.h"
 #include "Game/Board.h"
@@ -17,8 +18,8 @@ using namespace std::chrono_literals;
 
 UCI_Mediator::UCI_Mediator(const Player& player, const bool enable_logging) : Outside_Communicator(enable_logging)
 {
-    send_command("id name " + player.name());
-    send_command("id author " + player.author());
+    send_command("id name {}", player.name());
+    send_command("id author {}", player.author());
     send_command("option name UCI_Opponent type string");
     send_command("uciok");
 }
@@ -236,7 +237,7 @@ Game_Result UCI_Mediator::handle_move(Board& board,
                                       const Move& move,
                                       std::vector<const Move*>& move_list) const
 {
-    send_command("bestmove " + move.coordinates());
+    send_command("bestmove {}", move.coordinates());
     move_list.push_back(&move);
     return board.play_move(move);
 }
