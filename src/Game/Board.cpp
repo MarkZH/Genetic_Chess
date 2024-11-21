@@ -98,7 +98,7 @@ namespace
         if( ! assertion)
         {
             throw std::invalid_argument(std::format("Bad FEN input: {}\n{}", input_fen,
-                                                    std::vformat(failure_message_template, std::make_format_args(args...))));
+                                                    String::sformat(failure_message_template, args...)));
         }
     }
 }

@@ -90,7 +90,7 @@ class Outside_Communicator
 
             ofs << String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S")
                 << " -- "
-                << String::format_message(data, args...)
+                << String::sformat(data, args...)
                 << std::endl;
         }
 
@@ -108,7 +108,7 @@ class Outside_Communicator
         template<typename ...Format_Args>
         static void send_command(const std::string& cmd, const Format_Args&... args) noexcept
         {
-            const auto message = std::vformat(cmd, std::make_format_args(args...));
+            const auto message = String::sformat(cmd, args...);
             queue_log("SENDING: {}", message);
             std::cout << message << std::endl;
         }
@@ -143,7 +143,7 @@ class Outside_Communicator
         template<typename... Format_Args>
         static void queue_log(const std::string& data, Format_Args... args)
         {
-            log_queue.push_back(String::format_message(data, args...));
+            log_queue.push_back(String::sformat(data, args...));
         }
 };
 

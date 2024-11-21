@@ -57,7 +57,7 @@ namespace
         if( ! expected_result)
         {
             all_tests_passed = false;
-            std::cerr << String::format_message(fail_message, args...) << '\n';
+            std::cerr << String::sformat(fail_message, args...) << '\n';
         }
 
         return expected_result;
