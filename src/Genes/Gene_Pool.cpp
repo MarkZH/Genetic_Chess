@@ -19,7 +19,6 @@ using namespace std::chrono_literals;
 #include <numeric>
 #include <sstream>
 #include <semaphore>
-#include <algorithm>
 #include <format>
 
 #include "Players/Genetic_AI.h"
