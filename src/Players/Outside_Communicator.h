@@ -107,9 +107,10 @@ class Outside_Communicator
         template<typename ...Format_Args>
         static void send_command(const std::string& cmd, const Format_Args&... args) noexcept
         {
-            const auto message = std::vformat(cmd, std::make_format_args(args...));
+            const auto message = String::format_message(cmd, args...);
             queue_log("SENDING: {}", message);
-            std::cout << message << std::endl;
+            std::println(std::cout, "{}", message);
+            std::cout.flush();
         }
 
         //! \brief Wait for a command from the outside interface and pass it on to derived class instances.
