@@ -104,7 +104,9 @@ class Outside_Communicator
         //! \brief Output the given string to the outside interface.
         //!
         //! The outgoing string is also logged to a local file.
+        //! \tparam Format_Args The types of data to populate the command.
         //! \param cmd The string to send to the outside interface.
+        //! \param args The data to fill in the command.
         template<typename ...Format_Args>
         static void send_command(const std::string& cmd, const Format_Args&... args) noexcept
         {
@@ -139,7 +141,9 @@ class Outside_Communicator
 
         //! \brief Log data to a local text file.
         //!
+        //! \tparam Format_Args The types of data to populate the log message.
         //! \param data A text string to write.
+        //! \param args The data to fill in the log message.
         template<typename... Format_Args>
         static void queue_log(const std::string& data, Format_Args... args)
         {
