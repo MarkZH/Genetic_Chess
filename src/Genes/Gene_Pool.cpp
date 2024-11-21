@@ -80,6 +80,10 @@ void gene_pool(const std::string& config_file)
     const auto config = Configuration(config_file);
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
+    if(gene_pool_population % 2 != 0)
+    {
+        throw std::invalid_argument("Gene pool population must be even so every AI plays every round.");
+    }
     const auto genome_file_name = config.as_text("gene pool file");
     if(genome_file_name.empty())
     {
