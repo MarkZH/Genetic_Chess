@@ -6,6 +6,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <format>
+#include <ranges>
 
 #include "Players/Player.h"
 #include "Game/Board.h"
@@ -73,8 +74,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 else if(parse.at(1) == "fen")
                 {
                     const auto fen_begin = std::next(parse.begin(), 2);
-                    const auto fen_end = std::next(fen_begin, 6);
-                    board = Board(String::join(fen_begin, fen_end, " "));
+                    board = Board(String::join(std::views::counted(fen_begin, 6), " "));
                 }
 
                 move_list.clear();

@@ -57,18 +57,6 @@ namespace String
         return result;
     }
 
-    //! \brief Join a sequence of strings into a single string with joiner strings in between.
-    //!
-    //! \tparam Iter An iterator type.
-    //! \param begin An iterator to the first string in the sequence.
-    //! \param end An iterator past the end of the sequence.
-    //! \param joiner A string that will be placed between every string in the sequence.
-    template<typename Iter>
-    std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
-    {
-        return join(std::ranges::subrange(begin, end), joiner);
-    }
-
     //! \brief Determine whether a string exists inside another string.
     //!
     //! \param container The string to search.
