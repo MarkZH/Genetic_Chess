@@ -8,6 +8,7 @@
 #include <fstream>
 #include <chrono>
 #include <format>
+#include <print>
 
 #include "Game/Color.h"
 
@@ -109,7 +110,7 @@ class Outside_Communicator
         {
             const auto message = String::format_message(cmd, args...);
             queue_log("SENDING: {}", message);
-            std::println(std::cout, "{}", message);
+            std::println("{}", message);
             std::cout.flush();
         }
 
