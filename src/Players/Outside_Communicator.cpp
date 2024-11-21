@@ -29,7 +29,7 @@ std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, c
     }
     else
     {
-        throw std::runtime_error("Unrecognized protocol: " + protocol_type);
+        throw std::runtime_error(std::format("Unrecognized protocol: {}", protocol_type));
     }
 }
 
@@ -44,7 +44,7 @@ Outside_Communicator::Outside_Communicator(const bool enable_logging)
         ofs = std::ofstream(log_file_name);
         if( ! ofs)
         {
-            throw std::runtime_error("Could not write to file: " + log_file_name);
+            throw std::runtime_error(std::format("Could not write to file: {}", log_file_name));
         }
     }
 }
@@ -106,13 +106,6 @@ std::string Outside_Communicator::get_last_command(const bool while_listening)
     {
         return last_listening_result.valid() ? last_listening_result.get() : receive_command();
     }
-}
-
-void Outside_Communicator::send_command(const std::string& cmd) noexcept
-{
-    queue_log("SENDING: {}", cmd);
-    std::println("{}", cmd);
-    std::cout.flush();
 }
 
 void Outside_Communicator::listen(Clock& clock)

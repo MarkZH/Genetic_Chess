@@ -7,6 +7,7 @@
 #include <future>
 #include <fstream>
 #include <chrono>
+#include <format>
 
 #include "Game/Color.h"
 
@@ -103,7 +104,13 @@ class Outside_Communicator
         //!
         //! The outgoing string is also logged to a local file.
         //! \param cmd The string to send to the outside interface.
-        static void send_command(const std::string& cmd) noexcept;
+        template<typename ...Format_Args>
+        static void send_command(const std::string& cmd, const Format_Args&... args) noexcept
+        {
+            const auto message = std::vformat(cmd, std::make_format_args(args...));
+            queue_log("SENDING: {}", message);
+            std::cout << message << std::endl;
+        }
 
         //! \brief Wait for a command from the outside interface and pass it on to derived class instances.
         //!

@@ -149,7 +149,7 @@ namespace String
         }
         else
         {
-            throw std::invalid_argument("Non-numeric data in argument: " + s);
+            throw std::invalid_argument(std::format("Non-numeric data in argument: {}", s));
         }
     }
 

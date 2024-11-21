@@ -128,7 +128,14 @@ void Gene::read_from(std::istream& is)
         std::accumulate(properties.begin(), properties.end(), std::string{},
                         [](const auto& so_far, const auto& key_value)
                         {
-                            return so_far + (key_value.second.empty() ? "\n" + key_value.first : "");
+                            if(key_value.second.empty())
+                            {
+                                return std::format("{}\n{}", so_far, key_value.first);
+                            }
+                            else
+                            {
+                                return so_far;
+                            }
                         });
     if( ! missing_data.empty())
     {

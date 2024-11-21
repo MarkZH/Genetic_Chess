@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <iomanip>
+#include <format>
 
 #include "Utility/String.h"
 
@@ -24,7 +25,7 @@ Configuration::Configuration(const std::string& file_name)
     std::ifstream ifs(file_name);
     if( ! ifs)
     {
-        throw std::runtime_error("Could not open configuration file: " + file_name);
+        throw std::runtime_error(std::format("Could not open configuration file: {}", file_name));
     }
 
     for(std::string line; std::getline(ifs, line);)
@@ -37,7 +38,7 @@ Configuration::Configuration(const std::string& file_name)
 
         if( ! line.contains('='))
         {
-            throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
+            throw std::runtime_error(std::format("Configuration file lines must be of form \"Name = Value\"\n{}", line));
         }
 
         const auto line_split = String::split(line, "=", 1);
@@ -46,12 +47,12 @@ Configuration::Configuration(const std::string& file_name)
 
         if(parameter.empty() || value.empty())
         {
-            throw std::runtime_error("Configuration parameter cannot be empty.\n" + line);
+            throw std::runtime_error(std::format("Configuration parameter cannot be empty.\n{}", line));
         }
 
         if(parameters.count(parameter) > 0)
         {
-            throw std::runtime_error("Configuration parameter used more than once: " + parameter);
+            throw std::runtime_error(std::format("Configuration parameter used more than once: {}", parameter));
         }
 
         parameters[parameter] = value;
@@ -73,7 +74,7 @@ std::string Configuration::as_text(const std::string& parameter) const
         {
             print_key_value_pair(std::cerr, key, value);
         }
-        throw std::runtime_error("Configuration parameter not found: " + parameter);
+        throw std::runtime_error(std::format("Configuration parameter not found: {}", parameter));
     }
 }
 
@@ -95,8 +96,11 @@ bool Configuration::as_boolean(const std::string& parameter, const std::string& 
     }
     else
     {
-        throw std::runtime_error("Invalid value for \"" + parameter + "\" : \"" + as_text(parameter) + "\"" +
-                                 "\nExpected \"" + affirmative + "\" or \"" + negative + "\".");
+        throw std::runtime_error(std::format("Invalid value for \"{}\" : \"{}\"\nExpected \"{}\" or \"{}\".",
+                                             parameter,
+                                             as_text(parameter),
+                                             affirmative,
+                                             negative));
     }
 }
 

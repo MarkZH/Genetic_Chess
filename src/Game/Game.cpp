@@ -6,6 +6,7 @@
 #include <iostream>
 #include <print>
 #include <memory>
+#include <format>
 
 #include "Players/Player.h"
 #include "Players/Genetic_AI.h"
@@ -266,7 +267,7 @@ void start_game(Main_Tools::command_line_options options)
         }
         else
         {
-            throw std::invalid_argument("Invalid or incomplete game option: " + opt);
+            throw std::invalid_argument(std::format("Invalid or incomplete game option: {}", opt));
         }
     }
 

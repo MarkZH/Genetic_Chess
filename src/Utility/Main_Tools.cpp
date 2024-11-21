@@ -4,12 +4,12 @@
 #include "Utility/Help_Writer.h"
 
 #include <string>
-#include <string_view>
 #include <vector>
 #include <stdexcept>
 #include <iostream>
 #include <tuple>
 #include <print>
+#include <format>
 
 void Main_Tools::print_help()
 {
@@ -94,7 +94,7 @@ Main_Tools::command_line_options Main_Tools::parse_options(int argc, char* argv[
         {
             if(options.empty())
             {
-                throw std::invalid_argument("Invalid option: " + token);
+                throw std::invalid_argument(std::format("Invalid option: {}", token));
             }
             std::get<1>(options.back()).push_back(token);
         }

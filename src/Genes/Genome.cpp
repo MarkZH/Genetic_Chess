@@ -177,7 +177,7 @@ void Genome::read_from(std::istream& is)
         const auto line_split = String::split(line, ":", 1);
         if(line_split.size() != 2)
         {
-            throw Genome_Creation_Error("No colon in parameter line: " + line);
+            throw Genome_Creation_Error(std::format("No colon in parameter line: {}", line));
         }
 
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
@@ -196,7 +196,7 @@ void Genome::read_from(std::istream& is)
         }
         else
         {
-            throw Genome_Creation_Error("Bad line in genome file (expected Name): " + line);
+            throw Genome_Creation_Error(std::format("Bad line in genome file (expected Name): {}", line));
         }
     }
 
@@ -241,7 +241,7 @@ int Genome::id() const noexcept
 
 std::string Genome::name() const noexcept
 {
-    return "Genetic Chess #" + std::to_string(id());
+    return std::format("Genetic Chess #{}", id());
 }
 
 std::string Genome::author() const noexcept

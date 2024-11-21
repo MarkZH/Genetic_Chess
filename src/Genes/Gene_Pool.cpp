@@ -248,7 +248,7 @@ namespace
         auto ofs = std::ofstream(genome_file_name, std::ios::app);
         if( ! ofs)
         {
-            throw std::runtime_error("Could not open gene pool file for writing: " + genome_file_name);
+            throw std::runtime_error(std::format("Could not open gene pool file for writing: {}", genome_file_name));
         }
 
         std::print(ofs, "Still Alive: ");
@@ -346,7 +346,7 @@ namespace
                 }
                 else
                 {
-                    throw std::invalid_argument("Bad PGN Result line: " + line);
+                    throw std::invalid_argument(std::format("Bad PGN Result line: {}", line));
                 }
             }
         }
@@ -408,7 +408,7 @@ namespace
         const auto time_spec = String::split(time_text);
         if(time_spec.size() != 2)
         {
-            throw std::invalid_argument("Invalid time limit. Must be of form <number> <unit>. Got: " + time_text);
+            throw std::invalid_argument(std::format("Invalid time limit. Must be of form <number> <unit>. Got: {}", time_text));
         }
 
         const auto number = std::stod(time_spec[0]);
@@ -431,7 +431,7 @@ namespace
         }
         else
         {
-            throw std::invalid_argument("Invalid time unit: " + unit);
+            throw std::invalid_argument(std::format("Invalid time unit: {}", unit));
         }
     }
 
