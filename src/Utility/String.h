@@ -46,18 +46,6 @@ namespace String
         return container | std::ranges::views::join_with(joiner) | std::ranges::to<std::string>();
     }
 
-    //! \brief Join a sequence of strings into a single string with joiner strings in between.
-    //!
-    //! \tparam Iter An iterator type.
-    //! \param begin An iterator to the first string in the sequence.
-    //! \param end An iterator past the end of the sequence.
-    //! \param joiner A string that will be placed between every string in the sequence.
-    template<typename Iter>
-    std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
-    {
-        return join(std::ranges::subrange(begin, end), joiner);
-    }
-
     //! \brief Remove leading and trailing whitespace from a string.
     //!
     //! \param s The input string.

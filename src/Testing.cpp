@@ -1554,10 +1554,8 @@ namespace
         const auto split_join_input = "a/b/c/d";
         const auto splitter = "/";
         const auto split = String::split(split_join_input, splitter);
-        const auto rejoin = String::join(split.begin(), split.end(), splitter);
+        const auto rejoin = String::join(split, splitter);
         test_result(tests_passed, split_join_input == rejoin, "Iterator Split-join failed: {} --> {}", split_join_input, rejoin);
-        const auto rejoin2 = String::join(split, splitter);
-        test_result(tests_passed, split_join_input == rejoin2, "Container Split-join failed: {} --> {}", split_join_input, rejoin2);
     }
 
     void commas_as_thousands_separators_correctly_placed(bool& tests_passed)
