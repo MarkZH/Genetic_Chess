@@ -154,6 +154,18 @@ namespace String
         return Duration{to_number<typename Duration::rep>(s)};
     }
 
+    //! Wrapper for std::vformat that's easier to use.
+    //! 
+    //! \tparam Format_Args The types of data that will populate the format string.
+    //! \param format_template A string representing a format template in the same way as std::format() and std::vformat().
+    //! \param args The data to populate the format string.
+    //! \returns A std::string formatted with the provided args data.
+    template<typename ...Format_Args>
+    std::string sformat(const std::string& format_template, const Format_Args&... args)
+    {
+        return std::vformat(format_template, std::make_format_args(args...));
+    }
+
     //! \brief Create a text string of the given time point in the given format
     //!
     //! \param point_in_time The time point to convert.
@@ -167,8 +179,7 @@ namespace String
     {
         const auto point_with_tz = std::chrono::zoned_time(std::chrono::current_zone(),
                                                            std::chrono::time_point_cast<Precision>(point_in_time));
-        return std::vformat(std::format("{{:{}}}", format), 
-                            std::make_format_args(point_with_tz));
+        return sformat(std::format("{{:{}}}", format), point_with_tz);
     }
 
     //! \brief Create a strings with added line breaks so no line is longer than a limit.
@@ -180,12 +191,6 @@ namespace String
     //! All whitespace will be condensed to single spaces before wrapping. The character ~ will be
     //! converted to a non-breaking space.
     std::string word_wrap(const std::string& text, size_t line_length, size_t indent = 0) noexcept;
-
-    template<typename ...Format_Args>
-    std::string format_message(const std::string& failure_template, const Format_Args&... args)
-    {
-        return std::vformat(failure_template, std::make_format_args(args...));
-    }
 }
 
 #endif // STRING_H

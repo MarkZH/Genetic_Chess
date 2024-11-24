@@ -110,6 +110,7 @@ class Clock
         //! \brief Returns whether the clock's time has expired for the player on move.
         bool running_time_expired() const noexcept;
 
+        //! \brief Returns a text version of the time left on the clock formatted into hours : minutes : seconds.
         std::string time_left_display(Piece_Color color) const noexcept;
 
     private:

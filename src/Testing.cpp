@@ -59,7 +59,7 @@ namespace
         if( ! expected_result)
         {
             all_tests_passed = false;
-            std::println(std::cerr, "{}", String::format_message(fail_message, args...));
+            std::println(std::cerr, "{}", String::sformat(fail_message, args...));
         }
 
         return expected_result;

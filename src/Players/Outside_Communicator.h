@@ -90,7 +90,7 @@ class Outside_Communicator
             flush_log_queue();
 
             const auto timestamp = String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S");
-            std::println(ofs, "{} -- {}", timestamp, String::format_message(data, args...));
+            std::println(ofs, "{} -- {}", timestamp, String::sformat(data, args...));
             ofs.flush();
         }
 
@@ -104,11 +104,13 @@ class Outside_Communicator
         //! \brief Output the given string to the outside interface.
         //!
         //! The outgoing string is also logged to a local file.
+        //! \tparam Format_Args The types of data to populate the command.
         //! \param cmd The string to send to the outside interface.
+        //! \param args The data to fill in the command.
         template<typename ...Format_Args>
         static void send_command(const std::string& cmd, const Format_Args&... args) noexcept
         {
-            const auto message = String::format_message(cmd, args...);
+            const auto message = String::sformat(cmd, args...);
             queue_log("SENDING: {}", message);
             std::println("{}", message);
             std::cout.flush();
@@ -140,11 +142,13 @@ class Outside_Communicator
 
         //! \brief Log data to a local text file.
         //!
+        //! \tparam Format_Args The types of data to populate the log message.
         //! \param data A text string to write.
+        //! \param args The data to fill in the log message.
         template<typename... Format_Args>
         static void queue_log(const std::string& data, Format_Args... args)
         {
-            log_queue.push_back(String::format_message(data, args...));
+            log_queue.push_back(String::sformat(data, args...));
         }
 };
 

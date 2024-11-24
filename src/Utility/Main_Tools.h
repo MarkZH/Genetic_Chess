@@ -24,7 +24,7 @@ namespace Main_Tools
     {
         if( ! condition)
         {
-            throw std::invalid_argument(String::format_message(failure_template, args...));
+            throw std::invalid_argument(String::sformat(failure_template, args...));
         }
     }
 
