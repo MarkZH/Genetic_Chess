@@ -49,7 +49,8 @@ namespace String
         }
 
         std::string result = container.front();
-        for(const auto& piece : container | std::views::drop(1))
+        const auto rest = container | std::views::drop(1);
+        for(const auto& piece : rest)
         {
             result += joiner;
             result += piece;
