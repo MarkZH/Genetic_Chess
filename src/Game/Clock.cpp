@@ -222,8 +222,8 @@ bool Clock::running_time_expired() const noexcept
 std::string Clock::time_left_display(Piece_Color color) const noexcept
 {
     const auto time = time_left(color);
-    const auto hours = std::chrono::duration_cast<std::chrono::hours>(time).count();
-    const auto minutes = std::chrono::duration_cast<std::chrono::minutes>(time).count() % 60;
-    const auto seconds = std::fmod(std::floor(10*time.count())/10, 60.0);
-    return std::format("{:02} : {:02} : {:04.1f}", hours, minutes, seconds);
+    const auto hrs = std::chrono::duration_cast<std::chrono::hours>(time).count();
+    const auto mins = std::chrono::duration_cast<std::chrono::minutes>(time).count() % 60;
+    const auto secs = std::fmod(std::floor(10*time.count())/10, 60.0);
+    return std::format("{:02} : {:02} : {:04.1f}", hrs, mins, secs);
 }
