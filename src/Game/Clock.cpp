@@ -6,6 +6,7 @@ using namespace std::chrono_literals;
 #include <limits>
 #include <sstream>
 #include <format>
+#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
