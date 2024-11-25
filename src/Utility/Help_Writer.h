@@ -44,6 +44,7 @@ class Help_Writer
         void add_option(const std::string& name,
                         const std::string& description) noexcept;
 
+        //! \brief Write the entire help text to a single string.
         std::string output() const noexcept;
 
     private:
