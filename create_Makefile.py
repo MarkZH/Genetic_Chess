@@ -126,7 +126,7 @@ options_list['release'] = ["-O3", "-DNDEBUG", "-march=native", "-mtune=native"]
 
 system = sys.argv[1]
 if system == 'gcc':
-    compiler = 'g++'
+    compiler = 'g++-14'
     base_options.extend([
         "-std=c++23",
         # "-Wzero-as-null-pointer-constant",

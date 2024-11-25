@@ -531,7 +531,7 @@ void run_speed_tests()
         int(std::ranges::max_element(timing_results,
                                      [](const auto& x, const auto& y) { return x.second.size() < y.second.size(); })->second.size());
     std::println("");
-    const auto header_format = "{:{}}   {}";
+    constexpr auto header_format = "{:{}}   {}";
     std::println(header_format, "Test Item", name_width, std::format("Time ({})", + time_unit));
     std::println(header_format, "---------", name_width, "---------");
     for(const auto& [time, name] : timing_results)

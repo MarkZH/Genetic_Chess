@@ -51,7 +51,7 @@ namespace PGN
     template<typename Data_Type>
     void print_game_header_line(std::ostream& output, const std::string& heading, const Data_Type& data)
     {
-        const auto header_format = "[{} \"{}\"]";
+        constexpr auto header_format = "[{} \"{}\"]";
         if constexpr(std::is_same_v<Data_Type, std::string>)
         {
             std::println(output, header_format, heading, data.empty() ? "?" : data);
