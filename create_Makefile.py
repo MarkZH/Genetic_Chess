@@ -31,7 +31,7 @@ def target_sort(a, b):
         return 1
 
 def all_targets_so_far(depends, operations):
-    return sorted(list(set(list(depends.keys()) + list(operations.keys()))), key=functools.cmp_to_key(target_sort))
+    return sorted(set(depends.keys()) | set(operations.keys()), key=functools.cmp_to_key(target_sort))
 
 if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
     print('Specify a compiler ("gcc" or "clang")')
