@@ -31,7 +31,7 @@ def target_sort(a, b):
         return 1
 
 def all_targets_so_far(depends, operations):
-    return sorted(list(set(list(depends.keys()) + list(operations.keys()))), key=functools.cmp_to_key(target_sort))
+    return sorted(set(depends.keys()) | set(operations.keys()), key=functools.cmp_to_key(target_sort))
 
 if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
     print('Specify a compiler ("gcc" or "clang")')
@@ -108,7 +108,6 @@ options_list = dict()
 linker_options = dict()
 base_options = [
         "-std=c++23",
-        "-lstdc++fs",
         "-Wshadow",
         "-Wcast-align",
         "-Wundef",
@@ -129,7 +128,6 @@ system = sys.argv[1]
 if system == 'gcc':
     compiler = 'g++-14'
     base_options.extend([
-        # "-Wzero-as-null-pointer-constant",
         "-Wmain",
         "-Wno-maybe-uninitialized",
         "-Wconversion"])
@@ -138,7 +136,6 @@ elif system == 'clang':
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     options_list['debug'].extend(["-Og"] + linker_options['debug'])
     base_options.extend([
-        "-Wno-unused-command-line-argument",
         "-Wnon-virtual-dtor",
         "-Wredundant-decls",
         "-Wmissing-declarations",
