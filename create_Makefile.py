@@ -108,7 +108,6 @@ options_list = dict()
 linker_options = dict()
 base_options = [
         "-std=c++20",
-        "-lstdc++fs",
         "-Wshadow",
         "-Wcast-align",
         "-Wundef",
@@ -129,7 +128,6 @@ system = sys.argv[1]
 if system == 'gcc':
     compiler = 'g++'
     base_options.extend([
-        # "-Wzero-as-null-pointer-constant",
         "-Wmain",
         "-Wno-maybe-uninitialized",
         "-Wconversion"])
@@ -138,7 +136,6 @@ elif system == 'clang':
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     options_list['debug'].extend(["-Og"] + linker_options['debug'])
     base_options.extend([
-        "-Wno-unused-command-line-argument",
         "-Wnon-virtual-dtor",
         "-Wredundant-decls",
         "-Wmissing-declarations",
