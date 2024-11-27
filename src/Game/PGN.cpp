@@ -552,17 +552,9 @@ void PGN::print_game_record(const Board& board,
     }
     std::print(game_text, " {}", actual_result.game_ending_annotation());
 
-    const auto pgn_text = std::format("{}\n{}\n\n\n", header_text.str(), String::word_wrap(game_text.str(), 80));
-
-    if(file_name.empty())
-    {
-        std::print("{}", pgn_text);
-    }
-    else
-    {
-        std::ofstream ofs(file_name, std::ios::app);
-        std::print(ofs, "{}", pgn_text);
-    }
+    auto ofs = std::ofstream(file_name, std::ios::app);
+    auto& output = file_name.empty() ? std::cout : ofs;
+    std::print(output, "{}\n{}\n\n\n", header_text.str(), String::word_wrap(game_text.str(), 80));
 
     assert(commentary_board.fen() == board.fen());
 }
