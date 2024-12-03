@@ -11,38 +11,25 @@
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
-    std::vector<std::string> result;
+    const auto to_vector = std::ranges::to<std::vector<std::string>>();
+
     const auto initial_take = std::min(count, s.size());
-    auto splitted = std::views::split(s, delim);
-    for(const auto& token : splitted | std::views::take(initial_take))
-    {
-        result.emplace_back(token.begin(), token.end());
-    }
-
-    std::vector<std::string> remainder;
-    for(const auto& token : splitted | std::views::drop(initial_take))
-    {
-        remainder.emplace_back(token.begin(), token.end());
-    }
-
+    auto split_view = std::views::split(s, delim);
+    auto result = split_view | std::views::take(initial_take) | to_vector;
+    const auto remainder = split_view | std::views::drop(initial_take) | to_vector;
     if( ! remainder.empty())
     {
         result.push_back(join(remainder, delim));
     }
-
     return result;
 }
 
 std::vector<std::string> String::split(const std::string& s) noexcept
 {
-    std::vector<std::string> result;
-    for(const auto& part : s | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
-                             | std::views::split(' ')
-                             | std::views::filter([](const auto& ss) { return ! ss.empty(); }))
-    {
-        result.emplace_back(part.begin(), part.end());
-    }
-    return result;
+    return s | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
+             | std::views::split(' ')
+             | std::views::filter([](const auto& ss) { return ! ss.empty(); })
+             | std::ranges::to<std::vector<std::string>>();
 }
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept

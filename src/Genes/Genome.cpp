@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numeric>
 #include <functional>
+#include <print>
 #include <format>
 
 #include "Game/Color.h"
@@ -250,12 +251,12 @@ std::string Genome::author() const noexcept
 
 void Genome::print(std::ostream& os) const noexcept
 {
-    os << "ID: " << id() << '\n';
+    std::println(os, "ID: {}", id());
     for(const auto& gene : genome)
     {
         gene->print(os);
     }
-    os << "END\n\n";
+    std::print(os, "END\n\n");
 }
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept

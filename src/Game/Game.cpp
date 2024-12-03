@@ -4,6 +4,7 @@
 #include <vector>
 #include <csignal>
 #include <iostream>
+#include <print>
 #include <memory>
 #include <format>
 
@@ -123,7 +124,7 @@ Game_Result play_game(Board board,
 
         if(Player::thinking_mode() != Thinking_Output_Type::NO_THINKING)
         {
-            std::cout << "\n" << player.name() << " chose " << move_chosen.algebraic(board) << '\n';
+            std::println("\n{} chose {}", player.name(), move_chosen.algebraic(board));
         }
 
         result = game_clock.punch(board);

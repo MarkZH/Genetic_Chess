@@ -25,7 +25,7 @@ double Total_Force_Gene::score_board(const Board& board, const Piece_Color persp
                                const auto piece = board.piece_on_square(square);
                                if(piece && piece.color() == perspective)
                                {
-                                   return sum + values[static_cast<size_t>(piece.type())];
+                                   return sum + values[std::to_underlying(piece.type())];
                                }
                                else
                                {

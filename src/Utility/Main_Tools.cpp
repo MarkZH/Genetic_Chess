@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <tuple>
+#include <print>
 #include <format>
 
 void Main_Tools::print_help()
@@ -53,7 +54,7 @@ void Main_Tools::print_help()
     help.add_option("-log-comms", "Log UCI/Xboard communications (except engine thinking) to a file.");
     help.add_paragraph("All game options in this section can be overriden by GUI commands except -event, -location, and -game-file.");
 
-    std::cout << help;
+    std::print("{}", help.output());
 }
 
 Main_Tools::command_line_options Main_Tools::parse_options(int argc, char* argv[])

@@ -68,6 +68,11 @@ void Help_Writer::add_option(const std::string& name, const std::string& descrip
     add_option(name, {}, {}, description);
 }
 
+std::string Help_Writer::output() const noexcept
+{
+    return text;
+}
+
 void Help_Writer::add_extra_space_after_option() noexcept
 {
     if(need_extra_space)
@@ -75,9 +80,4 @@ void Help_Writer::add_extra_space_after_option() noexcept
         text += '\n';
         need_extra_space = false;
     }
-}
-
-std::ostream& operator<<(std::ostream& os, const Help_Writer& help) noexcept
-{
-    return (os << help.text);
 }

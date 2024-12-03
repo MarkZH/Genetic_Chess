@@ -16,7 +16,7 @@ namespace
 {
     void print_key_value_pair(std::ostream& os, const std::string& key, const std::string& value) noexcept
     {
-        os << std::quoted(key) << " --> " << std::quoted(value) << "\n";
+        std::println(os, "\"{}\" --> \"{}\"", key, value);
     }
 }
 
@@ -36,7 +36,7 @@ Configuration::Configuration(const std::string& file_name)
             continue;
         }
 
-        if( ! String::contains(line, '='))
+        if( ! line.contains('='))
         {
             throw std::runtime_error(std::format("Configuration file lines must be of form \"Name = Value\"\n{}", line));
         }

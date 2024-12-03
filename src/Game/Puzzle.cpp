@@ -9,6 +9,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <optional>
+#include <print>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -39,7 +40,7 @@ namespace Puzzle
                     throw std::invalid_argument(std::format("The input is not an FEN or file name: {}", fen_or_file_name));
                 }
 
-                std::cout << std::format("Reading from file: {}", fen_or_file_name) << std::endl;
+                std::println("Reading from file: {}", fen_or_file_name);
                 std::string line;
                 while(std::getline(file_input, line))
                 {
@@ -68,13 +69,13 @@ namespace Puzzle
         for(const auto& puzzle : puzzles_to_solve)
         {
             solver->reset();
-            std::cout << "\n=============\n\n" << puzzle << std::endl;
+            std::println("\n=============\n\n{}", puzzle);
             const auto board = Board{ puzzle };
             board.cli_print(std::cout);
             const auto clock = Clock(120s, 1);
             solver->choose_move(board, clock);
             const auto result = solver->commentary_for_next_move(board);
-            std::cout << "\n" << String::extract_delimited_text(result, '(', ')') << std::endl;
+            std::println("\n{}", String::extract_delimited_text(result, '(', ')'));
         }
     }
 }

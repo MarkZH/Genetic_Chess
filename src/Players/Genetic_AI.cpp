@@ -9,6 +9,7 @@ using namespace std::chrono_literals;
 #include <cmath>
 #include <limits>
 #include <fstream>
+#include <print>
 #include <format>
 
 #include "Players/Game_Tree_Node_Result.h"
@@ -400,57 +401,55 @@ void Genetic_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
 
     const auto time_so_far = std::chrono::steady_clock::now() - clock_start_time;
     using centiseconds = std::chrono::duration<int, std::centi>;
-    std::cout << thought.depth()
-        << " "
-        << score
-        << " "
-        << std::chrono::duration_cast<centiseconds>(time_so_far).count()
-        << " "
-        << nodes_searched
-        << " "
-        << maximum_depth
-        << " "
-        << int(double(nodes_searched)/Clock::seconds(time_so_far).count())
-        << '\t';
+    std::print("{} {} {} {} {} {}\t", 
+               thought.depth(), 
+               score, 
+               std::chrono::duration_cast<centiseconds>(time_so_far).count(), 
+               nodes_searched, 
+               maximum_depth, 
+               int(double(nodes_searched)/Clock::seconds(time_so_far).count()));
 
     // Principal variation
     for(const auto& move : thought.variation_line())
     {
-        std::cout << move->coordinates() << ' ';
+        std::print("{} ", move->coordinates());
     }
 
-    std::cout << std::endl;
+    std::println("");
+    std::cout.flush();
 }
 
 void Genetic_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
                                      const Piece_Color perspective) const noexcept
 {
     const auto time_so_far = std::chrono::steady_clock::now() - clock_start_time;
-    std::cout << "info"
-              << " depth " << thought.depth()
-              << " time " << std::chrono::duration_cast<std::chrono::milliseconds>(time_so_far).count()
-              << " nodes " << nodes_searched
-              << " nps " << int(double(nodes_searched)/Clock::seconds(time_so_far).count())
-              << " pv ";
+    std::print("info depth {} time {} nodes {} nps {} pv ",
+               thought.depth(),
+               std::chrono::duration_cast<std::chrono::milliseconds>(time_so_far).count(),
+               nodes_searched,
+               int(double(nodes_searched) / Clock::seconds(time_so_far).count()));
+
     for(const auto& move : thought.variation_line())
     {
-        std::cout << move->coordinates() << " ";
+        std::print("{} ", move->coordinates());
     }
-    std::cout << "score ";
+
+    std::print("score ");
     if(thought.is_winning_for(perspective))
     {
-        std::cout << "mate " << (1 + thought.depth())/2; // moves, not plies
+        std::print("mate {}", (1 + thought.depth())/2); // moves, not plies
     }
     else if(thought.is_losing_for(perspective))
     {
-        std::cout << "mate -" << (1 + thought.depth())/2; // moves, not plies
+        std::print("mate -{}", (1 + thought.depth())/2); // moves, not plies
     }
     else
     {
-        std::cout << "cp " << int(thought.corrected_score(perspective)/centipawn_value());
+        std::print("cp {}", int(thought.corrected_score(perspective)/centipawn_value()));
     }
-    std::cout << " currmove " << thought.variation_line().front()->coordinates();
-    std::cout << std::endl;
+
+    std::println(" currmove {}", thought.variation_line().front()->coordinates());
+    std::cout.flush();
 }
 
 std::chrono::duration<double> Genetic_AI::time_since_last_output() const noexcept

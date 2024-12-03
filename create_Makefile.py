@@ -107,7 +107,7 @@ depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t
 options_list = dict()
 linker_options = dict()
 base_options = [
-        "-std=c++20",
+        "-std=c++23",
         "-Wshadow",
         "-Wcast-align",
         "-Wundef",
@@ -126,7 +126,7 @@ options_list['release'] = ["-O3", "-DNDEBUG", "-march=native", "-mtune=native"]
 
 system = sys.argv[1]
 if system == 'gcc':
-    compiler = 'g++'
+    compiler = 'g++-14'
     base_options.extend([
         "-Wmain",
         "-Wno-maybe-uninitialized",

@@ -43,30 +43,7 @@ namespace String
     template<typename Container>
     std::string join(const Container& container, const std::string& joiner) noexcept
     {
-        if(container.empty())
-        {
-            return {};
-        }
-
-        std::string result = container.front();
-        const auto rest = container | std::views::drop(1);
-        for(const auto& piece : rest)
-        {
-            result += joiner;
-            result += piece;
-        }
-        return result;
-    }
-
-    //! \brief Determine whether a string exists inside another string.
-    //!
-    //! \param container The string to search.
-    //! \param target The character or string to search for.
-    //! \returns True if the target is inside the container.
-    template<class T>
-    bool contains(const std::string& container, const T& target) noexcept
-    {
-        return container.find(target) != std::string::npos;
+        return container | std::ranges::views::join_with(joiner) | std::ranges::to<std::string>();
     }
 
     //! \brief Remove leading and trailing whitespace from a string.

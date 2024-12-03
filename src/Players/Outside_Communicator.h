@@ -8,6 +8,7 @@
 #include <fstream>
 #include <chrono>
 #include <format>
+#include <print>
 
 #include "Game/Color.h"
 
@@ -88,10 +89,9 @@ class Outside_Communicator
 
             flush_log_queue();
 
-            ofs << String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S")
-                << " -- "
-                << String::sformat(data, args...)
-                << std::endl;
+            const auto timestamp = String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S");
+            std::println(ofs, "{} -- {}", timestamp, String::sformat(data, args...));
+            ofs.flush();
         }
 
     protected:
@@ -112,7 +112,8 @@ class Outside_Communicator
         {
             const auto message = String::sformat(cmd, args...);
             queue_log("SENDING: {}", message);
-            std::cout << message << std::endl;
+            std::println("{}", message);
+            std::cout.flush();
         }
 
         //! \brief Wait for a command from the outside interface and pass it on to derived class instances.

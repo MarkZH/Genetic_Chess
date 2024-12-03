@@ -10,6 +10,7 @@
 #include <iterator>
 #include <limits>
 #include <string>
+#include <print>
 #include <format>
 
 #include "Game/Board.h"
@@ -246,12 +247,12 @@ double Gene::evaluate(const Board& board, const Piece_Color perspective, const s
 
 void Gene::print(std::ostream& os) const noexcept
 {
-    os << "Name: " << name() << "\n";
+    std::println(os, "Name: {}", name());
     for(const auto& [name, value] : list_properties())
     {
-        os << name << ": " << value << "\n";
+        std::println(os, "{}: {}", name, value);
     }
-    os << "\n";
+    std::print(os, "\n");
 }
 
 void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
@@ -286,7 +287,7 @@ void Gene::test(bool& test_variable, const Board& board, const Piece_Color persp
     const auto result = score_board(board, perspective, board.played_ply_count());
     if(std::abs(result - expected_score) > 1e-6)
     {
-        std::cerr << std::format("Error in {} Test #{}: Expected {}, Got: {}\n", name(), test_number, expected_score, result);
+        std::println(std::cerr, "Error in {} Test #{}: Expected {}, Got: {}", name(), test_number, expected_score, result);
         board.cli_print(std::cerr);
         test_variable = false;
     }
