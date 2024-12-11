@@ -17,22 +17,25 @@
 
 std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, const bool enable_logging)
 {
-    const auto protocol_type = Outside_Communicator::receive_command();
+    std::string protocol_type;
+    std::getline(std::cin, protocol_type);
+    auto mediator = std::unique_ptr<Outside_Communicator>();
     if(protocol_type == "xboard")
     {
-        return std::make_unique<Xboard_Mediator>(player, enable_logging);
+        mediator = std::make_unique<Xboard_Mediator>(player, enable_logging);
     }
     else if(protocol_type == "uci")
     {
-        return std::make_unique<UCI_Mediator>(player, enable_logging);
+        mediator = std::make_unique<UCI_Mediator>(player, enable_logging);
     }
     else
     {
         throw std::runtime_error(std::format("Unrecognized protocol: {}", protocol_type));
     }
-}
 
-std::vector<std::string> Outside_Communicator::log_queue{};
+    mediator->log(protocol_type);
+    return mediator;
+}
 
 Outside_Communicator::Outside_Communicator(const bool enable_logging)
 {
@@ -78,11 +81,11 @@ std::string Outside_Communicator::receive_command()
     {
         if( ! std::getline(std::cin, result))
         {
-            queue_log("GUI disconnected");
+            log("GUI disconnected");
             throw Game_Ended("GUI disconnected");
         }
 
-        queue_log("RECEIVING: {}", result);
+        log("RECEIVING: {}", result);
     }
 
     if(result == "quit")
@@ -110,19 +113,4 @@ std::string Outside_Communicator::get_last_command(const bool while_listening)
 void Outside_Communicator::listen(Clock& clock)
 {
     last_listening_result = std::async(std::launch::async, &Outside_Communicator::listener, this, std::ref(clock));
-}
-
-void Outside_Communicator::flush_log_queue() const
-{
-    static bool flushing = false;
-    if( ! flushing)
-    {
-        flushing = true;
-        for(const auto& message : log_queue)
-        {
-            log(message);
-        }
-        log_queue.clear();
-        flushing = false;
-    }
 }

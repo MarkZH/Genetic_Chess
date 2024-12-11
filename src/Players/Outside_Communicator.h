@@ -87,8 +87,6 @@ class Outside_Communicator
                 return;
             }
 
-            flush_log_queue();
-
             const auto timestamp = String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S");
             std::println(ofs, "{} -- {}", timestamp, String::sformat(data, args...));
             ofs.flush();
@@ -108,10 +106,10 @@ class Outside_Communicator
         //! \param cmd The string to send to the outside interface.
         //! \param args The data to fill in the command.
         template<typename ...Format_Args>
-        static void send_command(const std::string& cmd, const Format_Args&... args) noexcept
+        void send_command(const std::string& cmd, const Format_Args&... args) const noexcept
         {
             const auto message = String::sformat(cmd, args...);
-            queue_log("SENDING: {}", message);
+            log("SENDING: {}", message);
             std::println("{}", message);
             std::cout.flush();
         }
@@ -121,7 +119,7 @@ class Outside_Communicator
         //! \returns The command from the outside interface if not "quit".
         //! \exception Game_Ended If the command "quit" is received or an error occurs, the game will
         //!         end and the program will exit.
-        static std::string receive_command();
+        std::string receive_command();
 
         //! \brief Returns either the command received while listening or waits for a new command.
         //!
@@ -132,24 +130,10 @@ class Outside_Communicator
 
     private:
         mutable std::ofstream ofs;
-        static std::vector<std::string> log_queue;
         std::string remote_opponent_name;
         std::future<std::string> last_listening_result;
 
         virtual std::string listener(Clock& clock) = 0;
-
-        void flush_log_queue() const;
-
-        //! \brief Log data to a local text file.
-        //!
-        //! \tparam Format_Args The types of data to populate the log message.
-        //! \param data A text string to write.
-        //! \param args The data to fill in the log message.
-        template<typename... Format_Args>
-        static void queue_log(const std::string& data, Format_Args... args)
-        {
-            log_queue.push_back(String::sformat(data, args...));
-        }
 };
 
 #endif // OUTSIDE_PLAYER_H
