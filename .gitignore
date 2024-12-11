@@ -95,3 +95,5 @@ doc/doxygen/
 # CPPcheck files
 Genetic_Chess.cppcheck
 Genetic_Chess-cppcheck-build-dir/*
+*.dt
+*.command
