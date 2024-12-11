@@ -94,31 +94,13 @@ namespace
         std::print(std::cerr, ", ");
         print_list(rest ...);
     }
+
     template<typename ...Argument_Types>
     void print_arguments(const Argument_Types& ... arguments) noexcept
     {
         print_argument_leader();
         print_list(arguments...);
         print_argument_trailer();
-    }
-
-    template<typename Result_Type>
-    void print_result(const Result_Type& result)
-    {
-        std::print(std::cerr, "{}", result);
-    }
-
-    template<>
-    void print_result(const std::vector<std::string>& results)
-    {
-        if(results.empty())
-        {
-            std::print(std::cerr, "empty list");
-        }
-        else
-        {
-            std::print(std::cerr, "{{{}}}", String::join(results, ", "));
-        }
     }
 
     // Run the callable f on the arguments. If the result of the argument is not
@@ -131,9 +113,9 @@ namespace
         if(result != expected_result)
         {
             std::print(std::cerr, "{} failed. Expected result: '", test_name);
-            print_result(expected_result);
+            std::print(std::cerr, "{}", expected_result);
             std::print(std::cerr, "'; Got: '");
-            print_result(result);
+            std::print(std::cerr, "{}", result);
             std::println(std::cerr, "'");
             print_arguments(arguments...);
             tests_passed = false;
