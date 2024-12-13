@@ -49,7 +49,7 @@ class Fixed_Capacity_Vector
                               Iterator range_end) noexcept
         {
             const auto move_distance = std::distance(range_begin, range_end);
-            assert(size() + move_distance < maximum_size());
+            assert(size() + move_distance <= maximum_size());
             std::move(position, end(), position + move_distance);
             std::copy(range_begin, range_end, position);
             insertion_point += move_distance;
