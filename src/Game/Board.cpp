@@ -1175,10 +1175,10 @@ void Board::compare_hashes(const Board& other) const noexcept
     }
     std::print(std::cerr, "\n");
     const auto hash_diff = (board_hash() ^ other.board_hash());
-    const auto white = std::to_underlying(Piece_Color::WHITE);
-    const auto black = std::to_underlying(Piece_Color::BLACK);
-    const auto right = std::to_underlying(Direction::RIGHT);
-    const auto left  = std::to_underlying(Direction::LEFT);
+    constexpr auto white = std::to_underlying(Piece_Color::WHITE);
+    constexpr auto black = std::to_underlying(Piece_Color::BLACK);
+    constexpr auto right = std::to_underlying(Direction::RIGHT);
+    constexpr auto left  = std::to_underlying(Direction::LEFT);
     const auto both_white_castles = (castling_hash_values[white][right] ^ castling_hash_values[white][left]);
     const auto both_black_castles = (castling_hash_values[black][right] ^ castling_hash_values[black][left]);
     if(en_passant_target.is_set() && hash_diff == en_passant_hash_values[en_passant_target.file() - 'a'])
