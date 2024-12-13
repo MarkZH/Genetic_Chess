@@ -112,11 +112,7 @@ namespace
         const auto result = f(arguments...);
         if(result != expected_result)
         {
-            std::print(std::cerr, "{} failed. Expected result: '", test_name);
-            std::print(std::cerr, "{}", expected_result);
-            std::print(std::cerr, "'; Got: '");
-            std::print(std::cerr, "{}", result);
-            std::println(std::cerr, "'");
+            std::println(std::cerr, "{} failed. Expected result: '{}'; Got: '{}'", test_name, expected_result, result);
             print_arguments(arguments...);
             tests_passed = false;
         }
@@ -133,8 +129,7 @@ namespace
         }
         catch(const std::exception& e)
         {
-            std::println(std::cerr, "{} failed. Function should not have thrown.", test_name.empty() ? "Test" : test_name);
-            std::println(std::cerr, "{}", e.what());
+            std::println(std::cerr, "{} failed. Function should not have thrown.\n{}", test_name.empty() ? "Test" : test_name, e.what());
             print_arguments(arguments...);
             tests_passed = false;
         }
