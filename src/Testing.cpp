@@ -512,7 +512,7 @@ void run_speed_tests()
                                      })->second.size());
     std::println("");
     constexpr auto header_format = "{:{}}   {}";
-    std::println(header_format, "Test Item", name_width, std::format("Time ({})", + time_unit));
+    std::println(header_format, "Test Item", name_width, std::format("Time ({})", time_unit));
     std::println(header_format, "---------", name_width, "---------");
     for(const auto& [time, name] : timing_results)
     {
