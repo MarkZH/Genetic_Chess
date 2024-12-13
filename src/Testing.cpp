@@ -506,7 +506,10 @@ void run_speed_tests()
     std::ranges::sort(timing_results);
     const auto name_width =
         int(std::ranges::max_element(timing_results,
-                                     [](const auto& x, const auto& y) { return x.second.size() < y.second.size(); })->second.size());
+                                     [](const auto& x, const auto& y)
+                                     {
+                                         return x.second.size() < y.second.size();
+                                     })->second.size());
     std::println("");
     constexpr auto header_format = "{:{}}   {}";
     std::println(header_format, "Test Item", name_width, std::format("Time ({})", + time_unit));
