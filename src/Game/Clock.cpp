@@ -8,6 +8,7 @@ using namespace std::chrono_literals;
 #include <print>
 #include <format>
 #include <cmath>
+#include <ostream>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"

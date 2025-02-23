@@ -9,6 +9,7 @@
 #include <chrono>
 #include <format>
 #include <print>
+#include <ostream>
 
 #include "Game/Color.h"
 
