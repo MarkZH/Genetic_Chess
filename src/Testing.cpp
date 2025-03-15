@@ -80,7 +80,8 @@ namespace
     template<typename ...Argument_Types>
     void print_arguments(const Argument_Types& ... arguments) noexcept
     {
-        std::print(std::cerr, "Argument: (");
+        constexpr auto plural = sizeof...(arguments) == 1 ? "" : "s";
+        std::print(std::cerr, "Argument{}: (", plural);
         if constexpr (sizeof...(arguments) > 0)
         {
             print_list(arguments...);
