@@ -88,6 +88,7 @@ namespace
         std::println(std::cerr, ")");
     }
 
+#ifndef __cpp_lib_format_ranges
     void print_list(std::ostream& os, const std::vector<std::string>& words) noexcept
     {
         std::print(os, "[");
@@ -102,6 +103,7 @@ namespace
         }
         std::print(os, "]");
     }
+#endif
 
     // Run the callable f on the arguments. If the result of the argument is not
     // equal to the expected result, set tests_passed to false and print
