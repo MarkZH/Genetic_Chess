@@ -66,42 +66,26 @@ namespace
         return expected_result;
     }
 
-    void print_argument_leader()
-    {
-        std::print(std::cerr, "Argument: (");
-    }
-
-    void print_argument_trailer()
-    {
-        std::println(std::cerr, ")");
-    }
-
-    void print_arguments() noexcept
-    {
-        print_argument_leader();
-        print_argument_trailer();
-    }
-
-    template<typename Argument_Type>
-    void print_list(const Argument_Type& arg) noexcept
-    {
-        std::print(std::cerr, "'{}'", arg);
-    }
-
     template<typename First_Argument_Type, typename ...Rest_Argument_Types>
     void print_list(const First_Argument_Type& first, const Rest_Argument_Types& ... rest) noexcept
     {
-        print_list(first);
-        std::print(std::cerr, ", ");
-        print_list(rest ...);
+        std::print(std::cerr, "'{}'", first);
+        if constexpr (sizeof...(rest) > 0)
+        {
+            std::print(std::cerr, ", ");
+            print_list(rest ...);
+        }
     }
 
     template<typename ...Argument_Types>
     void print_arguments(const Argument_Types& ... arguments) noexcept
     {
-        print_argument_leader();
-        print_list(arguments...);
-        print_argument_trailer();
+        std::print(std::cerr, "Argument: (");
+        if constexpr (sizeof...(arguments) > 0)
+        {
+            print_list(arguments...);
+        }
+        std::println(std::cerr, ")");
     }
 
     void print_list(std::ostream& os, const std::vector<std::string>& words) noexcept
