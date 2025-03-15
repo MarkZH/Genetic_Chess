@@ -83,7 +83,7 @@ namespace
                 starting_fen_from_starting_hash[board_hash] = String::remove_extra_whitespace(fen);
             }
 
-            std::string retreive(uint64_t board_hash) const noexcept
+            std::string retrieve(uint64_t board_hash) const noexcept
             {
                 const auto map_lock = std::lock_guard(starting_fen_map_lock);
                 return starting_fen_from_starting_hash.at(board_hash);
@@ -316,7 +316,7 @@ void Board::cli_print_game(const Player& white, const Player& black, const Clock
 
 std::string Board::original_fen() const noexcept
 {
-    return fen_cache.retreive(starting_hash);
+    return fen_cache.retrieve(starting_hash);
 }
 
 Game_Result Board::play_move(const Move& move) noexcept
