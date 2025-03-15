@@ -17,6 +17,7 @@ using namespace std::chrono_literals;
 #include <print>
 #include <format>
 #include <ranges>
+#include <type_traits>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -103,6 +104,21 @@ namespace
         print_argument_trailer();
     }
 
+    void print_list(std::ostream& os, const std::vector<std::string>& words) noexcept
+    {
+        std::print(os, "[");
+        if( ! words.empty())
+        {
+            std::print(os, "\"{}\"", words.front());
+        }
+
+        for(const auto& word : words | std::ranges::views::drop(1))
+        {
+            std::print(std::cerr, ", \"{}\"", word);
+        }
+        std::print(os, "]");
+    }
+
     // Run the callable f on the arguments. If the result of the argument is not
     // equal to the expected result, set tests_passed to false and print
     // an error message. Otherwise, do nothing.
@@ -112,7 +128,22 @@ namespace
         const auto result = f(arguments...);
         if(result != expected_result)
         {
+        #ifdef __cpp_lib_format_ranges
             std::println(std::cerr, "{} failed. Expected result: '{}'; Got: '{}'", test_name, expected_result, result);
+        #else
+            if constexpr(std::is_same_v<Result_Type, std::vector<std::string>>)
+            {
+                std::print(std::cerr, "{} failed. Expected result: '", test_name);
+                print_list(std::cerr, expected_result);
+                std::print(std::cerr, "'; Got: '");
+                print_list(std::cerr, result);
+                std::println(std::cerr, "'");
+            }
+            else
+            {
+                std::println(std::cerr, "{} failed. Expected result: '{}'; Got: '{}'", test_name, expected_result, result);
+            }
+        #endif
             print_arguments(arguments...);
             tests_passed = false;
         }
