@@ -277,7 +277,7 @@ namespace
         std::print("\n\nGene pool size: {}  Gene pool file name: {}"
                    "\nGames: {}  White wins: {}  Black wins: {}  Draws: {}"
                    "\nRounds: {}  Mutation rate phase: {} ({}/{})"
-                   "\nMutation rate: {}  Game time: {} sec"
+                   "\nMutation rate: {}  Game time: {:.4f} sec"
                    "\nFinish time: {}\n\n",
                    pool.size(), genome_file_name,
                    games_played, white_wins, black_wins, draws,
