@@ -587,7 +587,7 @@ std::string Genetic_AI::commentary_for_next_move(const Board& board) const noexc
     }
 
     const auto& comment = commentary.at(comment_index);
-    const auto variation = comment.variation_line();
+    const auto& variation = comment.variation_line();
     const auto score = comment.corrected_score(board.whose_turn())/centipawn_value()/100.0;
     return variation_line(board, variation, score);
 }
