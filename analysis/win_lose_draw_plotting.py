@@ -73,6 +73,7 @@ def plot_endgames(file_name: str):
         return np.array([number_type(row[index]) for row in data]), name
 
     game_number, game_number_label = get_data("Game", int)
+    x_scale, x_label = common.x_axis_scaling(game_number)
     white_wins, white_wins_label = get_data("White Wins", int)
     black_wins, black_wins_label = get_data("Black Wins", int)
     draws, draws_label = get_data("Draws", int)
@@ -95,13 +96,13 @@ def plot_endgames(file_name: str):
         result_percentage = 100*common.moving_mean(result_data, win_lose_draw_window)
         total = np.sum(result_data)
         x_axis = common.centered_x_axis(game_number, result_percentage)
-        winner_axes.plot(x_axis, result_percentage, linewidth=line_width, label=f"{label} ({total})")
+        winner_axes.plot(x_axis/x_scale, result_percentage, linewidth=line_width, label=f"{label} ({total})")
 
     draw_result_plot(white_wins, white_wins_label)
     draw_result_plot(black_wins, black_wins_label)
     draw_result_plot(draws, draws_label)
 
-    winner_axes.set_xlabel(game_number_label)
+    winner_axes.set_xlabel(game_number_label + x_label)
     winner_axes.set_ylabel('Percentage')
     winner_axes.legend(fontsize=common.plot_params["legend text size"])
     winner_axes.set_title('Winning Sides')
@@ -127,7 +128,7 @@ def plot_endgames(file_name: str):
         outcome_window = 10000
         outcome_percentage = 100*common.moving_mean(outcome, outcome_window)
         x_axis = common.centered_x_axis(game_number, outcome_percentage)
-        outcome_axes.semilogy(x_axis, outcome_percentage, linewidth=line_width, label=label)
+        outcome_axes.semilogy(x_axis/x_scale, outcome_percentage, linewidth=line_width, label=label)
 
     draw_outcome_plot(white_checkmates, "White checkmate")
     draw_outcome_plot(black_checkmates, "Black checkmate")
@@ -139,7 +140,7 @@ def plot_endgames(file_name: str):
     draw_outcome_plot(no_legal, "Stalemate")
     draw_outcome_plot(time_and_material, "Time w/o material")
 
-    outcome_axes.set_xlabel('Games played')
+    outcome_axes.set_xlabel(f'Games played{x_label}')
     outcome_axes.set_ylabel('Percentage')
     outcome_axes.set_ylim(top=100)
     outcome_axes.set_title('Type of Endgame')
@@ -160,20 +161,20 @@ def plot_endgames(file_name: str):
         white_time_left[white_time_left < 0] = below_zero_random[white_time_left < 0]
         black_time_left[black_time_left < 0] = below_zero_random[black_time_left < 0]
 
-        game_time_axes.plot(game_number, white_time_left, '.k', markersize=marker_size)
-        game_time_axes.plot(game_number, black_time_left, '.k', markersize=marker_size)
+        game_time_axes.plot(game_number/x_scale, white_time_left, '.k', markersize=marker_size)
+        game_time_axes.plot(game_number/x_scale, black_time_left, '.k', markersize=marker_size)
         window = 100
         convolve_window = np.ones(window)/window
         x_margin = int(np.floor(window/2))
         avg_x_axis = game_number[x_margin - 1 : -x_margin]
-        game_time_axes.plot(avg_x_axis,
+        game_time_axes.plot(avg_x_axis/x_scale,
                             np.convolve(avg_time_left, convolve_window, mode="valid"),
                             'r',
                             linewidth=line_width,
                             label='Moving average')
         game_time_axes.legend(fontsize=common.plot_params["legend text size"])
         game_time_axes.set_ylim(max_time_left*(-0.10), max_time_left*1.05)
-        game_time_axes.set_xlabel('Game number')
+        game_time_axes.set_xlabel(f'Game number{x_label}')
         game_time_axes.set_ylabel('Time (sec)')
         game_time_axes.set_title('Time left on clock at end of game')
 
@@ -192,8 +193,8 @@ def plot_endgames(file_name: str):
             break
 
     move_count_figure, move_count_axes = plt.subplots()
-    move_count_axes.plot(game_number, moves_in_game, '.k', markersize=marker_size)
-    move_count_axes.set_xlabel('Game number')
+    move_count_axes.plot(game_number/x_scale, moves_in_game, '.k', markersize=marker_size)
+    move_count_axes.set_xlabel(f'Game number{x_label}')
     move_count_axes.set_ylabel('Moves in Game')
     move_count_axes.set_title('Number of moves in game')
     move_count_axes.set_ylim(0, max_game_length_display)

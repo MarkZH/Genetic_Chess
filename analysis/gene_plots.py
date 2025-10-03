@@ -92,6 +92,7 @@ def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], npt.NDArray]:
 def plot_genome(gene_pool_filename: str) -> None:
     column_names, data = parse_gene_pool(gene_pool_filename)
     id_list = data[:, 0]
+    scale, x_axis_label = common.x_axis_scaling(id_list)
 
     special_plots = {}
 
@@ -158,20 +159,20 @@ def plot_genome(gene_pool_filename: str) -> None:
                 if column_name.endswith("Activation End"):
                     gene_is_active = this_data > activation_begin_data
                     gene_is_inactive = np.logical_not(gene_is_active)
-                    these_axes.plot(id_list[gene_is_active], activation_begin_data[gene_is_active], style, **plot_options, label="Begin")
-                    these_axes.plot(id_list[gene_is_active], d[gene_is_active], style, **plot_options, label="End")
+                    these_axes.plot(id_list[gene_is_active]/scale, activation_begin_data[gene_is_active], style, **plot_options, label="Begin")
+                    these_axes.plot(id_list[gene_is_active]/scale, d[gene_is_active], style, **plot_options, label="End")
                     if np.any(gene_is_inactive):
                         mean_activation_point = (this_data + activation_begin_data)/2
-                        these_axes.plot(id_list[gene_is_inactive], mean_activation_point[gene_is_inactive], style, **plot_options, label="Inactive")
+                        these_axes.plot(id_list[gene_is_inactive]/scale, mean_activation_point[gene_is_inactive], style, **plot_options, label="Inactive")
                     these_axes.axhline(y=1.0, color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
                     legend = these_axes.legend()
                     for line in legend.get_lines():
                         line.set_markersize(line.get_markersize()*5)
                     name = name.removesuffix(" End")
                 else:
-                    these_axes.plot(common.centered_x_axis(id_list, d), d, style, **plot_options, label=label)
+                    these_axes.plot(common.centered_x_axis(id_list, d)/scale, d, style, **plot_options, label=label)
 
-            these_axes.set_xlabel(column_names[0])
+            these_axes.set_xlabel(column_names[0] + x_axis_label)
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of genomes')
                 leg = these_axes.legend(fontsize=common.plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
@@ -214,7 +215,7 @@ def plot_genome(gene_pool_filename: str) -> None:
         elif plot_axes == first_order_move_axes:
             label = name[len(sort_order_prefix) - 1:]
 
-        plot_axes.plot(x_axis, smooth_data, linewidth=common.plot_params['plot line weight'], label=label)
+        plot_axes.plot(x_axis/scale, smooth_data, linewidth=common.plot_params['plot line weight'], label=label)
 
     print('# Piece values')
     for piece, value in piece_end_values.items():
@@ -231,7 +232,7 @@ def plot_genome(gene_pool_filename: str) -> None:
         if special_axes == first_order_move_axes:
             for line in leg.get_lines():
                 line.set_linewidth(2*line.get_linewidth())
-        special_axes.set_xlabel('ID')
+        special_axes.set_xlabel(f'ID{x_axis_label}')
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **common.picture_file_args)
         plt.close(special_figure)

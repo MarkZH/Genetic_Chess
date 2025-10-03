@@ -4,7 +4,7 @@ from collections import defaultdict
 from enum import StrEnum, auto
 import numpy as np
 import matplotlib.pyplot as plt
-from common import read_all_games, print_sorted_count_table, picture_file_args, moving_mean, centered_x_axis
+from common import read_all_games, print_sorted_count_table, picture_file_args, moving_mean, centered_x_axis, x_axis_scaling
 
 
 def delete_checkmarks(move: str) -> str:
@@ -37,15 +37,16 @@ def count_all_castles(games_file_name: str) -> None:
         castling_games = np.array(games_where_castled[color], dtype=int)
         cumulative_castles = np.cumsum(castling_games)
         x_axis = np.arange(cumulative_castles.size) + 1
-        cumulative_axes.plot(x_axis, cumulative_castles, label=color.title())
+        x_scale, x_label = x_axis_scaling(x_axis)
+        cumulative_axes.plot(x_axis/x_scale, cumulative_castles, label=color.title())
 
         castling_rate = 100*moving_mean(castling_games, 10000)
         rate_x_axis = centered_x_axis(x_axis, castling_rate)
-        rate_axes.plot(rate_x_axis, castling_rate, label=color.title())
+        rate_axes.plot(rate_x_axis/x_scale, castling_rate, label=color.title())
 
     cumulative_axes.set_title("Total number of castles")
     cumulative_axes.set_ylabel("Cumulative castle count")
-    cumulative_axes.set_xlabel("Game count")
+    cumulative_axes.set_xlabel(f"Game count{x_label}")
     cumulative_axes.legend()
     cumulative_figure.tight_layout()
     cumulative_figure.savefig(f"{games_file_name}_castle_counts.{picture_file_args['format']}", **picture_file_args)
@@ -53,7 +54,7 @@ def count_all_castles(games_file_name: str) -> None:
 
     rate_axes.set_title("Percent of games with castling")
     rate_axes.set_ylabel("Castling percentage")
-    rate_axes.set_xlabel("Game count")
+    rate_axes.set_xlabel(f"Game count{x_label}")
     rate_axes.legend()
     rate_figure.tight_layout()
     rate_figure.savefig(f"{games_file_name}_castle_rate.{picture_file_args['format']}", **picture_file_args)

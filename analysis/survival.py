@@ -1,4 +1,4 @@
-import math
+import numpy as np
 import matplotlib.pyplot as plt
 import common
 
@@ -17,8 +17,9 @@ def plot_survival(pool_file_name: str) -> None:
             oldest_in_generation.append(max(ages.values()))
 
     fig, ax = plt.subplots()
-    ax.scatter(largest_ids, oldest_in_generation, common.plot_params["scatter dot size"])
-    ax.set_xlabel("ID")
+    scale, label = common.x_axis_scaling(largest_ids)
+    ax.scatter(np.array(largest_ids)/scale, oldest_in_generation, common.plot_params["scatter dot size"])
+    ax.set_xlabel(f"ID{label}")
     ax.set_ylabel(f"Age (games survived)")
     ax.set_title("Age of oldest player in each generation")
     fig.savefig(f"{pool_file_name}_survival.png", **common.picture_file_args)

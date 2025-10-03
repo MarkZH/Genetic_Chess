@@ -62,8 +62,9 @@ def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
     labels = list(top_openings.keys())
 
     figure, axes = plt.subplots()
-    stacks = axes.stackplot(game_counts, *top_openings.values(), labels=labels)
-    axes.set_xlabel('Games played')
+    x_scale, x_label = common.x_axis_scaling(game_counts)
+    stacks = axes.stackplot(game_counts/x_scale, *top_openings.values(), labels=labels)
+    axes.set_xlabel(f'Games played{x_label}')
     axes.set_ylabel('Cumulative percent of games')
     legend_handles, legend_labels = axes.get_legend_handles_labels()
     for label, stack in zip(legend_labels, stacks):

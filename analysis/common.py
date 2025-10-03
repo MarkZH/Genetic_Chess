@@ -124,3 +124,10 @@ def print_sorted_count_table(count_list: Iterable[tuple[Any, int]]):
     count_column_width = len(str(max(item[1] for item in count_list)))
     for value, count in sorted(count_list, key=lambda item: item[1]):
         print(f"{value:{value_column_width}} {count:{count_column_width}}")
+
+
+def x_axis_scaling(x_values: npt.NDArray) -> tuple[float, str]:
+    if np.max(x_values) >= 1e4:
+        return 1e3, " ($\\times 1000$)"
+    else:
+        return 1, ""
