@@ -149,6 +149,7 @@ def plot_genome(gene_pool_filename: str) -> None:
         is_sorter_order = name.startswith(sort_order_prefix)
         if not is_sorter_order:
             this_figure, these_axes = plt.subplots()
+            plots = []
 
             for column in range(np.size(this_data, 1) if is_sorter_count else 1):
                 label = str(column) if is_sorter_count else None
@@ -159,13 +160,22 @@ def plot_genome(gene_pool_filename: str) -> None:
                 if column_name.endswith("Activation End"):
                     gene_is_active = this_data > activation_begin_data
                     gene_is_inactive = np.logical_not(gene_is_active)
-                    these_axes.plot(id_list[gene_is_active]/scale, activation_begin_data[gene_is_active], style, **plot_options, label="Begin")
-                    these_axes.plot(id_list[gene_is_active]/scale, d[gene_is_active], style, **plot_options, label="End")
+                    plots.extend(these_axes.plot(id_list[gene_is_active]/scale, activation_begin_data[gene_is_active], style, **plot_options, label="Begin"))
+                    plots.extend(these_axes.plot(id_list[gene_is_active]/scale, d[gene_is_active], style, **plot_options, label="End"))
                     if np.any(gene_is_inactive):
                         mean_activation_point = (this_data + activation_begin_data)/2
-                        these_axes.plot(id_list[gene_is_inactive]/scale, mean_activation_point[gene_is_inactive], style, **plot_options, label="Inactive")
+                        plots.extend(these_axes.plot(id_list[gene_is_inactive]/scale, mean_activation_point[gene_is_inactive], style, **plot_options, label="Inactive"))
+                        active_ax = these_axes.twinx()
+                        window = 10000
+                        mean_active_fraction = common.moving_mean(gene_is_active.astype(float), window)
+                        active_x_axis = common.centered_x_axis(id_list, mean_active_fraction)/scale
+                        plots.extend(active_ax.plot(active_x_axis, mean_active_fraction, color="black", label="Activation fraction"))
+                        active_ax.set_ylabel("Fraction of genes with gene active")
+                        active_ax.set_ylim(these_axes.get_ylim())
                     these_axes.axhline(y=1.0, color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
-                    legend = these_axes.legend()
+                    these_axes.set_ylabel("Game progress")
+                    legend = these_axes.legend(handles=plots)
+                    plots.clear()
                     for line in legend.get_lines():
                         line.set_markersize(line.get_markersize()*5)
                     name = name.removesuffix(" End")
