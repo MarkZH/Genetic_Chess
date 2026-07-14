@@ -752,6 +752,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
                                  });
 
         return revealed_attacker != squares.end() &&
+               in_line_in_order(*revealed_attacker, move.start(), king_square) &&
                Algorithm::has_exactly_n(squares.begin(), revealed_attacker, [this](auto square) { return piece_on_square(square); }, 2);
     }
 
