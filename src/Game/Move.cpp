@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cctype>
 #include <string>
+#include <map>
 
 #include "Game/Board.h"
 #include "Game/Square.h"
@@ -120,6 +121,11 @@ std::string Move::algebraic(const Board& board) const noexcept
     return algebraic_base(board) + result_mark(board);
 }
 
+std::string Move::pseudolegal_algebraic(const Board& board) const noexcept
+{
+    return pseudolegal_algebraic_base(board) + result_mark(board);
+}
+
 std::string Move::algebraic_base(const Board& board) const noexcept
 {
     if(is_castle())
@@ -128,9 +134,23 @@ std::string Move::algebraic_base(const Board& board) const noexcept
     }
 
     const auto original_piece = board.piece_on_square(start());
+    if(original_piece.type() == Piece_Type::PAWN)
+    {
+        const auto promotion_text = promotion() ? std::format("={}", promotion_piece_symbol()) : std::string();
+        if(file_change() != 0)
+        {
+            return std::format("{}x{}{}", start().file(), end().text(), promotion_text);
+        }
+        else
+        {
+            return std::format("{}{}", end().text(), promotion_text);
+        }
+    }
 
-    auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
-    auto record_rank = false;
+    auto has_ambiguity = false;
+    auto file_origins = std::map<char, int>{ {start().file(), 1} };
+    auto rank_origins = std::map<int, int>{ {start().rank(), 1} };
+
     for(auto other_move : board.legal_moves())
     {
         if(other_move->start() == start())
@@ -141,14 +161,29 @@ std::string Move::algebraic_base(const Board& board) const noexcept
         const auto new_piece = board.piece_on_square(other_move->start());
         if(original_piece == new_piece && end() == other_move->end())
         {
-            if(other_move->start().file() != start().file() && ! record_file)
-            {
-                record_file = true;
-            }
-            else if(other_move->start().rank() != start().rank())
-            {
-                record_rank = true;
-            }
+            has_ambiguity = true;
+            file_origins[other_move->start().file()]++;
+            rank_origins[other_move->start().rank()]++;
+        }
+    }
+
+    auto record_file = false;
+    auto record_rank = false;
+
+    if(has_ambiguity)
+    {
+        if(file_origins[start().file()] == 1)
+        {
+            record_file = true;
+        }
+        else if(rank_origins[start().rank()] == 1)
+        {
+            record_rank = true;
+        }
+        else
+        {
+            record_file = true;
+            record_rank = true;
         }
     }
 
@@ -157,7 +192,86 @@ std::string Move::algebraic_base(const Board& board) const noexcept
     if(record_rank)                { move_record += std::to_string(start().rank()); }
     if(board.move_captures(*this)) { move_record += 'x'; }
     move_record += end().text();
-    if(promotion())                { move_record += std::string("=") + promotion_piece_symbol(); }
+    return move_record;
+}
+
+std::string Move::pseudolegal_algebraic_base(const Board& board) const noexcept
+{
+    if(is_castle())
+    {
+        return file_change() > 0 ? "O-O" : "O-O-O";
+    }
+
+    const auto original_piece = board.piece_on_square(start());
+    if(original_piece.type() == Piece_Type::PAWN)
+    {
+        const auto promotion_text = promotion() ? std::format("={}", promotion_piece_symbol()) : std::string();
+        if(file_change() != 0)
+        {
+            return std::format("{}x{}{}", start().file(), end().text(), promotion_text);
+        }
+        else
+        {
+            return std::format("{}{}", end().text(), promotion_text);
+        }
+    }
+
+    auto has_ambiguity = false;
+    auto file_origins = std::map<char, int>{ {start().file(), 1} };
+    auto rank_origins = std::map<int, int>{ {start().rank(), 1} };
+
+    for(const auto start_square : Square::all_squares())
+    {
+        if(start_square == start())
+        {
+            continue;
+        }
+
+        const auto new_piece = board.piece_on_square(start_square);
+        if(original_piece != new_piece)
+        {
+            continue;
+        }
+        
+        for(const auto& other_move_list : new_piece.move_lists(start_square))
+        {
+            for(const auto other_move : other_move_list)
+            {
+                if(end() == other_move->end())
+                {
+                    has_ambiguity = true;
+                    file_origins[other_move->start().file()]++;
+                    rank_origins[other_move->start().rank()]++;
+                }
+            }
+        }
+    }
+
+    auto record_file = false;
+    auto record_rank = false;
+
+    if(has_ambiguity)
+    {
+        if(file_origins[start().file()] == 1)
+        {
+            record_file = true;
+        }
+        else if(rank_origins[start().rank()] == 1)
+        {
+            record_rank = true;
+        }
+        else
+        {
+            record_file = true;
+            record_rank = true;
+        }
+    }
+
+    auto move_record = original_piece.pgn_symbol();
+    if(record_file) { move_record += start().file(); }
+    if(record_rank) { move_record += std::to_string(start().rank()); }
+    if(board.move_captures(*this)) { move_record += 'x'; }
+    move_record += end().text();
     return move_record;
 }
 

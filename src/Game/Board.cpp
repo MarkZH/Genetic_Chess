@@ -491,7 +491,8 @@ const Move& Board::interpret_move(const std::string& move_text) const
                              [this, &raw_move_text, raw](auto move)
                              {
                                  return raw(move->algebraic(*this)) == raw_move_text ||
-                                     move->coordinates() == raw_move_text;
+                                     move->coordinates() == raw_move_text ||
+                                     raw(move->pseudolegal_algebraic(*this)) == raw_move_text;
                              });
     if(move_iter != legal_moves().end())
     {

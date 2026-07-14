@@ -126,6 +126,9 @@ last move checks | start | e3 f6 Qh5 | true
 last move checks | start | e3 e6 Qe2 | false
 last move checks | 7k/P7/8/8/8/8/8/7K w - - 0 1 | a8=R | true
 
+# PGN ambiguous move notation
+all moves legal | 8/3Q4/3R4/8/1k6/5K2/5PQ1/6NQ w - - 3 58 | Qdh3
+
 # More tests from checking random PGNs
 all moves legal | 8/2r2p1p/4p3/p2n4/1pPRN1Pk/1P3P2/1P1K4/8 b - c3 0 41 | bxc3+
 

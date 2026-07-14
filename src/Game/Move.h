@@ -109,6 +109,14 @@ class Move
         //! \returns The full PGN record of a move.
         std::string algebraic(const Board& board) const noexcept;
 
+        //! \brief Creates a textual representation of a move suitable for a PGN game record with disambiguation for pseudolegal moves.
+        //! 
+        //! The disambiguation notation is included even when the other piece that could move to the square is pinned.
+        //!
+        //! \param board A Board instance just prior to the move being made.
+        //! \returns The full PGN record of a move.
+        std::string pseudolegal_algebraic(const Board& board) const noexcept;
+
         //! \brief Returns a textual representation of a move in coordinate notation.
         //!
         //! The first two characters indicate the starting square, the next two
@@ -161,6 +169,12 @@ class Move
         //! \param board The board on which the move is about to be made.
         //! \returns The movement portion of a PGN move entry.
         std::string algebraic_base(const Board& board) const noexcept;
+
+        //! \brief A textual representation of a move in PGN format without consequences ('+' for check, etc.) with pseudolegal disambiguation.
+        //!
+        //! \param board The board on which the move is about to be made.
+        //! \returns The movement portion of a PGN move entry.
+        std::string pseudolegal_algebraic_base(const Board& board) const noexcept;
 
         //! \brief How far move travels horizontally.
         //!
