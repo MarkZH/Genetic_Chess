@@ -32,6 +32,7 @@ void Main_Tools::print_help()
     help.add_option("-help", "Print this help text and exit.");
     help.add_option("-gene-pool", {"file name"}, "Start a run of a gene pool with parameters from the given file.");
     help.add_option("-confirm", {"file name"}, "Check a file containing PGN game records for any illegal moves or mismarked checks or checkmates.");
+    help.add_option("-errors", {"file name"}, "Check a file containing PGN game records for any illegal moves or mismarked checks or checkmates and print out all errors in the file.");
     help.add_option("-test", "Run tests to ensure various parts of the program function correctly.");
     help.add_option("-speed", "Run a speed test for gene scoring and board move submission.");
     help.add_option("-perft", "Run a legal move generation speed test.");

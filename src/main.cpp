@@ -38,6 +38,11 @@ int main(int argc, char *argv[])
             Main_Tools::argument_assert( ! parameters.empty(), "Provide a file containing games to confirm they have all legal moves.");
             PGN::confirm_game_record(parameters[0]);
         }
+        else if(option == "-errors")
+        {
+            Main_Tools::argument_assert( ! parameters.empty(), "Provide a file containing games to list all errors in the PGN records.");
+            PGN::find_all_pgn_errors(parameters[0]);
+        }
         else if(option == "-test")
         {
             return run_tests() ? EXIT_SUCCESS : EXIT_FAILURE;

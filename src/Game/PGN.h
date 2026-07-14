@@ -21,6 +21,8 @@ namespace PGN
     //! games read will be printed to the console.
     void confirm_game_record(const std::string& file_name);
 
+    void find_all_pgn_errors(const std::string& file_name);
+
     //! \brief Prints the PGN game record with commentary from Players.
     //!
     //! \param game_record_listing A list of Moves. This must be a legal sequence of moves starting from

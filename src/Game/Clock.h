@@ -113,6 +113,9 @@ class Clock
         //! \brief Returns a text version of the time left on the clock formatted into hours : minutes : seconds.
         std::string time_left_display(Piece_Color color) const noexcept;
 
+        //! \brief Returns a text version of the time left on the clock formatted into hours : minutes : seconds.
+        static std::string time_display(const std::chrono::duration<double>& time) noexcept;
+
     private:
         std::array<seconds, 2> timers;
         std::array<size_t, 2> moves_since_clock_reset{0, 0};

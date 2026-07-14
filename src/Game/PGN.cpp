@@ -19,6 +19,7 @@
 #include <sstream>
 #include <mutex>
 #include <format>
+#include <chrono>
 
 namespace
 {
@@ -166,6 +167,16 @@ namespace
             {
                 // Do nothing (is empty or is a move number)
             }
+            else if(word[0] == '$')
+            {
+                for(const auto d : word.substr(1))
+                {
+                    if( ! std::isdigit(d))
+                    {
+                        throw PGN_Error(std::format("Malformed NAG: {}", word));
+                    }
+                }
+            }
             else if(board.is_legal_move(word))
             {
                 board_before_last_move = board;
@@ -186,28 +197,31 @@ namespace
         }
     }
 
-    void add_header_data(std::ifstream& input, std::map<std::string, std::string>& headers)
+    void add_header_data(std::istream& input, std::map<std::string, std::string>& headers)
     {
         const auto brace_position = input.tellg();
 
         std::string tag_name;
         std::getline(input, tag_name, '"');
+        
         tag_name = String::trim_outer_whitespace(tag_name);
+        
+        std::string tag_value;
+        std::getline(input, tag_value, '"');
+        
         if(std::ranges::any_of(tag_name, String::isspace))
         {
             const auto line_count = line_number(input, brace_position);
             throw PGN_Error(std::format("Header tag name cannot contain spaces: {} (line: {})", tag_name, line_count));
         }
 
-        if(headers.count(tag_name) != 0)
+        if(headers.count(tag_name) != 0 && headers[tag_name] != tag_value)
         {
             const auto line_count = line_number(input, brace_position);
             throw PGN_Error(std::format("Duplicate header tag name: {} (line: {})", tag_name, line_count));
         }
 
-        std::string tag_value;
-        std::getline(input, tag_value, '"');
-        headers[tag_name] = String::remove_extra_whitespace(tag_value);
+        headers[tag_name] = tag_value;
         skip_passed_character(input, ']');
 
         if( ! input)
@@ -216,249 +230,346 @@ namespace
             throw PGN_Error(std::format("Malformed header tag (line: {})", line_count));
         }
     }
+
+    int scan_pgn_file(std::istream& input);
 }
 
 void PGN::confirm_game_record(const std::string& file_name)
 {
+    std::println("Reading file: {}", file_name);
     auto input = std::ifstream(file_name);
     if( ! input)
     {
         throw std::runtime_error(std::format("Could not open file {} for reading.", file_name));
     }
 
-    auto game_count = 0;
-    std::string move_number;
-    std::string word;
-    char saved_character = 0;
+    const auto start_time = std::chrono::steady_clock::now();
 
-    const auto valid_result_marks = {"1/2-1/2", "1-0", "0-1", "*"};
+    const auto game_count = scan_pgn_file(input);
 
-    auto expect_checkmate = true;
-    auto expect_fifty_move_draw = false;
-    auto expect_threefold_draw = false;
-    auto in_game = false;
-    std::map<std::string, std::string> headers;
-    Board board;
-    Board board_before_last_move;
-    Game_Result result;
-    while(true)
+    const auto end_time = std::chrono::steady_clock::now();
+    const auto duration = end_time - start_time;
+    std::println("Time taken to read {}: {}", file_name, Clock::time_display(duration));
+    std::println("Found {} game{}.", game_count, game_count == 1 ? "" : "s");
+}
+
+namespace
+{
+    int scan_pgn_file(std::istream& input)
     {
-        const auto next_character = saved_character ? saved_character : char(input.get());
-        saved_character = 0;
-        if( ! input && word.empty())
-        {
-            if(in_game)
-            {
-                throw PGN_Error("File ended in middle of game.");
-            }
-            else
-            {
-                std::println("Found {} game{}.", game_count, game_count == 1 ? "" : "s");
-                return;
-            }
-        }
+        auto game_count = 0;
+        const auto start_time = std::chrono::steady_clock::now();
+        std::string move_number;
+        std::string word;
+        unsigned char saved_character = 0;
 
-        if(std::isspace(next_character))
-        {
-        }
-        else if(next_character == ';')
-        {
-            if(word.empty())
-            {
-                skip_rest_of_line(input);
-            }
-            else
-            {
-                saved_character = next_character;
-            }
-        }
-        else if(next_character == '{')
-        {
-            if(word.empty())
-            {
-                skip_braced_comment(input);
-            }
-            else
-            {
-                saved_character = next_character;
-            }
-        }
-        else if(next_character == '}')
-        {
-            const auto line_count = line_number(input, input.tellg());
-            throw PGN_Error(std::format("Found closing curly brace before opener (line: {}).", line_count));
-        }
-        else if(next_character == '(')
-        {
-            if(word.empty())
-            {
-                confirm_rav(input, board_before_last_move);
-            }
-            else
-            {
-                saved_character = next_character;
-            }
-        }
-        else if(next_character == ')')
-        {
-            const auto line_count = line_number(input, input.tellg());
-            throw PGN_Error(std::format("Found closing RAV parentheses before opener (line: {})", line_count));
-        }
-        else if(in_game && next_character == '[')
-        {
-            const auto line_count = line_number(input, input.tellg());
-            throw PGN_Error(std::format("Found header line in the middle of another game (line: {})", line_count));
-        }
-        else if(next_character == '[')
-        {
-            add_header_data(input, headers);
-        }
-        else if(input)
-        {
-            word.push_back(next_character);
-            continue;
-        }
+        const auto valid_result_marks = { "1/2-1/2", "1-0", "0-1", "*" };
 
-        if(word.empty())
+        auto expect_checkmate = true;
+        auto expect_fifty_move_draw = false;
+        auto expect_threefold_draw = false;
+        auto in_game = false;
+        std::map<std::string, std::string> headers;
+        Board board;
+        Board board_before_last_move;
+        Game_Result result;
+        while(true)
         {
-            continue;
-        }
+            const auto next_character = saved_character ? saved_character : unsigned char(input.get());
+            saved_character = 0;
 
-        if( ! in_game)
-        {
-            const auto result_value = headers["Result"];
-            if(std::ranges::find(valid_result_marks, result_value) == valid_result_marks.end())
+            if( ! input && word.empty())
+            {
+                if(in_game)
+                {
+                    throw PGN_Error("File ended in middle of game.");
+                }
+                else
+                {
+                    return game_count;
+                }
+            }
+
+            if( ! std::isprint(next_character) && ! std::isspace(next_character))
+            {
+                std::println("Skipping character: {}", unsigned char(next_character));
+                continue;
+            }
+
+            if(std::isspace(next_character))
+            {
+            }
+            else if(next_character == ';')
+            {
+                if(word.empty())
+                {
+                    skip_rest_of_line(input);
+                }
+                else
+                {
+                    saved_character = next_character;
+                }
+            }
+            else if(next_character == '{')
+            {
+                if(word.empty())
+                {
+                    skip_braced_comment(input);
+                }
+                else
+                {
+                    saved_character = next_character;
+                }
+            }
+            else if(next_character == '}')
             {
                 const auto line_count = line_number(input, input.tellg());
-                throw PGN_Error(std::format("Malformed Result tag: {} (headers end at line: {})", result_value, line_count));
+                throw PGN_Error(std::format("Found closing curly brace before opener (line: {}).", line_count));
             }
-
-            if(result_value == "1/2-1/2" || result_value == "*")
+            else if(next_character == '(')
             {
-                expect_checkmate = false;
-            }
-
-            const auto terminator = headers["GameEnding"];
-            if( ! terminator.empty())
-            {
-                expect_checkmate = false;
-                if(terminator.contains("fold"))
+                if(word.empty())
                 {
-                    expect_threefold_draw = true;
+                    confirm_rav(input, board_before_last_move);
                 }
-                else if(terminator.contains("50"))
+                else
                 {
-                    expect_fifty_move_draw = true;
+                    saved_character = next_character;
                 }
             }
-
-            const auto fen = headers["FEN"];
-            if( ! fen.empty())
+            else if(next_character == ')')
             {
+                const auto line_count = line_number(input, input.tellg());
+                throw PGN_Error(std::format("Found closing RAV parentheses before opener (line: {})", line_count));
+            }
+            else if(in_game && next_character == '[')
+            {
+                const auto line_count = line_number(input, input.tellg());
+                throw PGN_Error(std::format("Found header line in the middle of another game (line: {})", line_count));
+            }
+            else if(next_character == '[')
+            {
+                add_header_data(input, headers);
+            }
+            else if(input)
+            {
+                word.push_back(next_character);
+                continue;
+            }
+
+            if(word.empty())
+            {
+                continue;
+            }
+
+            if(word[0] == '$')
+            {
+                // Ignore Numeric Annotation Glyphs (NAGs)
+                for(const auto c : word.substr(1))
+                {
+                    if( ! std::isdigit(c))
+                    {
+                        throw PGN_Error(std::format("Malformed NAG: {}", word));
+                    }
+                }
+                word.clear();
+                continue;
+            }
+
+            if( ! in_game)
+            {
+                const auto result_value = headers["Result"];
+                if(std::ranges::find(valid_result_marks, result_value) == valid_result_marks.end())
+                {
+                    const auto line_count = line_number(input, input.tellg());
+                    throw PGN_Error(std::format("Malformed Result tag: {} (headers end at line: {})", result_value, line_count));
+                }
+
+                if(result_value == "1/2-1/2" || result_value == "*")
+                {
+                    expect_checkmate = false;
+                }
+
+                const auto terminator = headers["GameEnding"];
+                if( ! terminator.empty())
+                {
+                    expect_checkmate = false;
+                    if(terminator.contains("fold"))
+                    {
+                        expect_threefold_draw = true;
+                    }
+                    else if(terminator.contains("50"))
+                    {
+                        expect_fifty_move_draw = true;
+                    }
+                }
+
+                const auto fen = headers["FEN"];
+                if( ! fen.empty())
+                {
+                    board = Board(fen);
+                }
+            }
+
+            in_game = true;
+
+            const auto token = word;
+            word.clear();
+
+            if(std::ranges::find(valid_result_marks, token) != valid_result_marks.end())
+            {
+                if(token != headers["Result"])
+                {
+                    const auto line_count = line_number(input, input.tellg());
+                    throw PGN_Error(std::format("Final result mark ({}) does not match game result. (line: {})", token, line_count));
+                }
+
+                const auto final_board_result = result.game_ending_annotation();
+                if(token != final_board_result)
+                {
+                    if(final_board_result == "*")
+                    {
+                        expect_checkmate = false;
+                    }
+                    else
+                    {
+                        const auto line_count = line_number(input, input.tellg());
+                        throw PGN_Error(std::format("Last move result ({}) on line {} does not match the game-ending tag ({}).",
+                                                    final_board_result, line_count, token));
+                    }
+                }
+
+                if( ! headers["GameEnding"].empty())
+                {
+                    check_rule_result("Header",
+                                      "50-move draw",
+                                      expect_fifty_move_draw,
+                                      result.ending_reason().contains("50"),
+                                      input);
+
+                    check_rule_result("Header",
+                                      "threefold draw",
+                                      expect_threefold_draw,
+                                      result.ending_reason().contains("fold"),
+                                      input);
+                }
+
+                check_rule_result("Header",
+                                  "checkmate",
+                                  expect_checkmate,
+                                  result.ending_reason().contains("mates"),
+                                  input);
+
+                expect_checkmate = true;
+                expect_fifty_move_draw = false;
+                expect_threefold_draw = false;
+                in_game = false;
+                headers.clear();
+                board = Board();
+                board_before_last_move = Board();
+                result = {};
+                ++game_count;
+                if(game_count % 1000 == 0)
+                {
+                    const auto now = std::chrono::steady_clock::now();
+                    const auto time_so_far = now - start_time;
+                    std::println("{} Games read: {}", Clock::time_display(time_so_far), String::format_number(game_count));
+                }
+                continue;
+            }
+
+            if(std::isdigit(token.front()))
+            {
+                move_number = std::format("{}. ", String::split(token, ".")[0]);
+                continue;
+            }
+
+            if(board.whose_turn() == Piece_Color::BLACK)
+            {
+                move_number += "... ";
+            }
+
+            if(token == "Z0")
+            {
+                const auto line_count = line_number(input, input.tellg());
+                std::println("Skipping null move ({}) at line {}", token, line_count);
+                auto fen = board.fen();
+                const auto index = fen.find(' ') + 1;
+                fen[index] = fen[index] == 'w' ? 'b' : 'w';
                 board = Board(fen);
+                continue;
             }
-        }
 
-        in_game = true;
-
-        const auto token = word;
-        word.clear();
-
-        if(std::ranges::find(valid_result_marks, token) != valid_result_marks.end())
-        {
-            if(token != headers["Result"])
+            if( ! board.is_legal_move(token))
             {
                 const auto line_count = line_number(input, input.tellg());
-                throw PGN_Error(std::format("Final result mark ({}) does not match game result. (line: {})", token, line_count));
+                auto message = std::ostringstream();
+                std::println(message, "Move ({}{}) is illegal (line: {}).", move_number, token, line_count);
+                board.cli_print(message);
+                std::print(message, "\nLegal moves: ");
+                for(const auto legal_move : board.legal_moves())
+                {
+                    std::print(message, "{} ", legal_move->algebraic(board));
+                }
+                std::println(message, "\n{}", board.fen());
+                throw PGN_Error(message.str());
             }
 
-            const auto final_board_result = result.game_ending_annotation();
-            if(token != final_board_result)
-            {
-                const auto line_count = line_number(input, input.tellg());
-                throw PGN_Error(std::format("Last move result ({}) on line {} does not match the game-ending tag ({}).",
-                                            final_board_result, line_count, token));
-            }
-
-            check_rule_result("Header",
-                              "50-move draw",
-                              expect_fifty_move_draw,
-                              result.ending_reason().contains("50"),
+            const auto& move_to_play = board.interpret_move(token);
+            const auto pgn_location = std::format("Move ({}{})", move_number, token);
+            check_rule_result(pgn_location,
+                              "capture",
+                              token.contains('x'),
+                              board.move_captures(move_to_play),
                               input);
 
-            check_rule_result("Header",
-                              "threefold draw",
-                              expect_threefold_draw,
-                              result.ending_reason().contains("fold"),
+            board_before_last_move = board;
+            result = board.play_move(move_to_play);
+
+            check_rule_result(pgn_location,
+                              "check",
+                              std::string_view("+#").contains(token.back()),
+                              board.king_is_in_check(),
                               input);
 
-            check_rule_result("Header",
+            check_rule_result(pgn_location,
                               "checkmate",
-                              expect_checkmate,
-                              result.ending_reason().contains("mates"),
+                              token.back() == '#',
+                              result.game_has_ended() && result.winner() != Winner_Color::NONE,
                               input);
-
-            expect_checkmate = true;
-            expect_fifty_move_draw = false;
-            expect_threefold_draw = false;
-            in_game = false;
-            headers.clear();
-            board = Board();
-            board_before_last_move = Board();
-            result = {};
-            ++game_count;
-            continue;
         }
-
-        if(std::isdigit(token.front()))
-        {
-            move_number = std::format("{}. ", String::split(token, ".")[0]);
-            continue;
-        }
-
-        if(board.whose_turn() == Piece_Color::BLACK)
-        {
-            move_number += "... ";
-        }
-
-        if( ! board.is_legal_move(token))
-        {
-            const auto line_count = line_number(input, input.tellg());
-            auto message = std::ostringstream();
-            std::println(message, "Move ({}{}) is illegal (line: {}).", move_number, token, line_count);
-            board.cli_print(message);
-            std::print(message, "\nLegal moves: ");
-            for(const auto legal_move : board.legal_moves())
-            {
-                std::print(message, "{} ", legal_move->algebraic(board));
-            }
-            std::println(message, "\n{}", board.fen());
-            throw PGN_Error(message.str());
-        }
-
-        const auto& move_to_play = board.interpret_move(token);
-        const auto pgn_location = std::format("Move ({}{})", move_number, token);
-        check_rule_result(pgn_location,
-                          "capture",
-                          token.contains('x'),
-                          board.move_captures(move_to_play),
-                          input);
-
-        board_before_last_move = board;
-        result = board.play_move(move_to_play);
-
-        check_rule_result(pgn_location,
-                          "check",
-                          std::string_view("+#").contains(token.back()),
-                          board.king_is_in_check(),
-                          input);
-
-        check_rule_result(pgn_location,
-                          "checkmate",
-                          token.back() == '#',
-                          result.game_has_ended() && result.winner() != Winner_Color::NONE,
-                          input);
     }
+}
+
+void PGN::find_all_pgn_errors(const std::string& file_name)
+{
+    auto input = std::ifstream(file_name);
+    if( ! input)
+    {
+        throw std::runtime_error(std::format("Could not open PGN file for reading: {}", file_name));
+    }
+
+    auto errors = std::ofstream(file_name + "-errors.txt");
+
+    const auto start_time = std::chrono::steady_clock::now();
+
+    while(input)
+    {
+        try
+        {
+            scan_pgn_file(input);
+        }
+        catch(const PGN_Error& error)
+        {
+            std::println("{}", error.what());
+            std::println(errors, "{}", error.what());
+            errors.flush();
+        }
+    }
+
+    const auto end_time = std::chrono::steady_clock::now();
+    const auto duration = end_time - start_time;
+    std::println("Time taken to read {}: {}", file_name, Clock::time_display(duration));
 }
 
 void PGN::print_game_record(const Board& board,
@@ -513,7 +624,7 @@ void PGN::print_game_record(const Board& board,
     PGN::print_game_header_line(header_text, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
     PGN::print_game_header_line(header_text, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
 
-    if(!actual_result.ending_reason().empty() && ! actual_result.ending_reason().contains("mates"))
+    if( ! actual_result.ending_reason().empty() && ! actual_result.ending_reason().contains("mates"))
     {
         PGN::print_game_header_line(header_text, "GameEnding", actual_result.ending_reason());
     }
