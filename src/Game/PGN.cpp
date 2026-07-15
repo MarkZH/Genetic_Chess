@@ -26,6 +26,10 @@ namespace
     //! Print the line number of the input stream at the current position.
     int line_number(std::istream& input, std::streampos error_position) noexcept;
 
+    void validate_nag(std::string& word);
+    void raise_illegal_move_error(std::istream& input, const std::string& move_number, const std::string& token, Board& board);
+    void null_move(std::istream& input, const std::string& token, Board& board);
+
     void check_rule_result(const std::string& rule_source,
                            const std::string& rule_name,
                            const bool expected_ruling,
@@ -169,23 +173,20 @@ namespace
             }
             else if(word[0] == '$')
             {
-                for(const auto d : word.substr(1))
-                {
-                    if( ! std::isdigit(d))
-                    {
-                        throw PGN_Error(std::format("Malformed NAG: {}", word));
-                    }
-                }
+                validate_nag(word);
             }
             else if(board.is_legal_move(word))
             {
                 board_before_last_move = board;
                 board.play_move(word);
             }
+            else if(word == "Z0" || word == "--")
+            {
+                null_move(input, word, board);
+            }
             else
             {
-                const auto line_count = line_number(input, token_start);
-                throw PGN_Error(std::format("Unable to parse token '{}' in RAV starting at line {}.", word, line_count));
+                raise_illegal_move_error(input, "RAV move: ", word, board);
             }
 
             if(c == ')')
@@ -203,7 +204,6 @@ namespace
 
         std::string tag_name;
         std::getline(input, tag_name, '"');
-        
         tag_name = String::trim_outer_whitespace(tag_name);
         
         std::string tag_value;
@@ -232,6 +232,7 @@ namespace
     }
 
     int scan_pgn_file(std::istream& input);
+    void null_move(std::istream& input, const std::string& token, Board& board);
 }
 
 void PGN::confirm_game_record(const std::string& file_name)
@@ -365,13 +366,7 @@ namespace
             if(word[0] == '$')
             {
                 // Ignore Numeric Annotation Glyphs (NAGs)
-                for(const auto c : word.substr(1))
-                {
-                    if( ! std::isdigit(c))
-                    {
-                        throw PGN_Error(std::format("Malformed NAG: {}", word));
-                    }
-                }
+                validate_nag(word);
                 word.clear();
                 continue;
             }
@@ -489,30 +484,15 @@ namespace
                 move_number += "... ";
             }
 
-            if(token == "Z0")
+            if(token == "Z0" || token == "--")
             {
-                const auto line_count = line_number(input, input.tellg());
-                std::println("Skipping null move ({}) at line {}", token, line_count);
-                auto fen = board.fen();
-                const auto index = fen.find(' ') + 1;
-                fen[index] = fen[index] == 'w' ? 'b' : 'w';
-                board = Board(fen);
+                null_move(input, token, board);
                 continue;
             }
 
             if( ! board.is_legal_move(token))
             {
-                const auto line_count = line_number(input, input.tellg());
-                auto message = std::ostringstream();
-                std::println(message, "Move ({}{}) is illegal (line: {}).", move_number, token, line_count);
-                board.cli_print(message);
-                std::print(message, "\nLegal moves: ");
-                for(const auto legal_move : board.legal_moves())
-                {
-                    std::print(message, "{} ", legal_move->algebraic(board));
-                }
-                std::println(message, "\n{}", board.fen());
-                throw PGN_Error(message.str());
+                raise_illegal_move_error(input, move_number, token, board);
             }
 
             const auto& move_to_play = board.interpret_move(token);
@@ -538,6 +518,42 @@ namespace
                               result.game_has_ended() && result.winner() != Winner_Color::NONE,
                               input);
         }
+    }
+
+    void null_move(std::istream& input, const std::string& token, Board& board)
+    {
+        const auto line_count = line_number(input, input.tellg());
+        std::println("Skipping null move ({}) at line {}", token, line_count);
+        auto fen = board.fen();
+        const auto index = fen.find(' ') + 1;
+        fen[index] = fen[index] == 'w' ? 'b' : 'w';
+        board = Board(fen);
+    }
+
+    void validate_nag(std::string& word)
+    {
+        for(const auto c : word.substr(1))
+        {
+            if(!std::isdigit(c))
+            {
+                throw PGN_Error(std::format("Malformed NAG: {}", word));
+            }
+        }
+    }
+
+    void raise_illegal_move_error(std::istream& input, const std::string& move_number, const std::string& token, Board& board)
+    {
+        const auto line_count = line_number(input, input.tellg());
+        auto message = std::ostringstream();
+        std::println(message, "Move ({}{}) is illegal (line: {}).", move_number, token, line_count);
+        board.cli_print(message);
+        std::print(message, "\nLegal moves: ");
+        for(const auto legal_move : board.legal_moves())
+        {
+            std::print(message, "{} ", legal_move->algebraic(board));
+        }
+        std::println(message, "\n{}", board.fen());
+        throw PGN_Error(message.str());
     }
 }
 
