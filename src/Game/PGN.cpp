@@ -565,6 +565,8 @@ void PGN::find_all_pgn_errors(const std::string& file_name)
         throw std::runtime_error(std::format("Could not open PGN file for reading: {}", file_name));
     }
 
+    std::println("Reading: {}", file_name);
+
     auto errors = std::ofstream(file_name + "-errors.txt");
 
     const auto start_time = std::chrono::steady_clock::now();
