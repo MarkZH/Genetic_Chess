@@ -580,6 +580,7 @@ void PGN::find_all_pgn_errors(const std::string& file_name)
             std::println("{}", error.what());
             std::println(errors, "{}", error.what());
             errors.flush();
+            skip_rest_of_line(input);
         }
     }
 
