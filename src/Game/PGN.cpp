@@ -413,10 +413,11 @@ namespace
 
             if(std::ranges::find(valid_result_marks, token) != valid_result_marks.end())
             {
-                if(token != headers["Result"])
+                const auto& header_game_result = headers["Result"];
+                if(token != header_game_result)
                 {
                     const auto line_count = line_number(input, input.tellg());
-                    throw PGN_Error(std::format("Final result mark ({}) does not match game result. (line: {})", token, line_count));
+                    throw PGN_Error(std::format("Final result mark ({}) does not match header game result ({}). (line: {})", token, header_game_result, line_count));
                 }
 
                 const auto final_board_result = result.game_ending_annotation();
